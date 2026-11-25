@@ -1,0 +1,60 @@
+{
+  "setup": "C:\\Users\\Ethan\\Desktop\\floders\\vibe\\Pudict\\src-tauri\\target\\release\\bundle\\nsis\\LanDict Installer Test_0.1.0_x64-setup.exe",
+  "startedAt": "2026-10-09T04:43:47",
+  "steps": [
+    {
+      "step": "pre-state",
+      "userData": true,
+      "runEntry": false,
+      "installDir": false
+    },
+    {
+      "step": "A-install-exit-code",
+      "exitCode": 0
+    },
+    {
+      "step": "A-installed",
+      "uninstallKey": true,
+      "startMenuShortcut": true,
+      "desktopShortcut": true,
+      "files": "landict.exe,dictionaries\\stardict.db,dictionaries\\landict-oxford.db,dictionaries\\landict-cedict.db,uninstall.exe",
+      "missing": "",
+      "runEntry": "\"C:\\Users\\Ethan\\AppData\\Local\\Programs\\LanDict Installer Test\\landict.exe\""
+    },
+    {
+      "step": "A-app-launch",
+      "skipped": true
+    },
+    {
+      "step": "A-uninstall",
+      "uninstallKeyRemoved": true,
+      "installDirRemoved": true,
+      "runEntryAfter": null,
+      "desktopShortcutRemoved": true,
+      "uninstallerExit": 0,
+      "userDataPreserved": true,
+      "startMenuShortcutRemoved": true
+    },
+    {
+      "step": "B-refused-without-agreement",
+      "exitCode": 2,
+      "installDirCreated": false
+    },
+    {
+      "step": "C-options-off",
+      "exitCode": 0,
+      "desktopShortcut": false,
+      "installerSelfDeleted": true,
+      "runEntry": null,
+      "startMenuShortcut": true
+    },
+    {
+      "step": "C-uninstall",
+      "installDirRemoved": true,
+      "userDataPreserved": true
+    }
+  ],
+  "failures": [],
+  "finishedAt": "2026-10-09T04:43:56",
+  "ok": true
+}

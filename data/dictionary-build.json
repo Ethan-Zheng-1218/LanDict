@@ -1,0 +1,40 @@
+{
+  "generatedAt": "2026-10-07T16:51:40.777Z",
+  "sources": {
+    "cedict": {
+      "path": "data\\cedict\\cedict.txt",
+      "bytes": 9860113,
+      "sha256": "9a75ef3fd7ff042774982626f2741c941bbfdb8f61cf898677fa61983deb2d89"
+    },
+    "oxford": {
+      "path": "data\\牛津高阶双解 Oxford Advanced Learner's English-Chinese Dictionary 7th.mdx",
+      "bytes": 15599710,
+      "sha256": "d17d6c63ea4eb757fb5d3211cff43d7a1e445cb662cc690f09b8ee2086e0a896"
+    },
+    "ecdict": {
+      "path": "data\\ecdict-sqlite-28\\stardict.db",
+      "bytes": 851288064,
+      "sha256": "2b5b40c2bdba04da0a51c8672e090f166987d5d895f32eb3fbfc5a516455fc75"
+    }
+  },
+  "products": {
+    "cedict": {
+      "rows": 98647,
+      "bytes": 7344128
+    },
+    "oxford": {
+      "rows": 42338,
+      "hanziRows": 143446,
+      "lemmaRows": 431,
+      "bytes": 28844032
+    },
+    "ecdict": {
+      "sourceRows": 3402564,
+      "rows": 58331,
+      "bytes": 10547200
+    }
+  },
+  "totalBytes": 46735360,
+  "keepCondition": "coalesce(collins,0)>0 OR oxford=1 OR bnc BETWEEN 1 AND 50000 OR frq BETWEEN 1 AND 50000",
+  "failures": []
+}

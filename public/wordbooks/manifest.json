@@ -1,0 +1,82 @@
+{
+  "generatedAt": "2026-10-14T06:26:28.419Z",
+  "source": {
+    "path": "data/ecdict-sqlite-28/stardict.db",
+    "bytes": 851288064
+  },
+  "note": "考试标签只有源库里有；产物随前端打包，源库不打包，构建完可以删除。",
+  "books": [
+    {
+      "id": "cet4",
+      "name": "四级",
+      "count": 3845,
+      "matched": 3849,
+      "droppedInflection": 1,
+      "droppedNotWord": 3,
+      "bytes": 37755
+    },
+    {
+      "id": "cet6",
+      "name": "六级",
+      "count": 5406,
+      "matched": 5407,
+      "droppedInflection": 0,
+      "droppedNotWord": 1,
+      "bytes": 55047
+    },
+    {
+      "id": "ky",
+      "name": "考研",
+      "count": 4800,
+      "matched": 4801,
+      "droppedInflection": 1,
+      "droppedNotWord": 0,
+      "bytes": 47342
+    },
+    {
+      "id": "gk",
+      "name": "高考",
+      "count": 3669,
+      "matched": 3677,
+      "droppedInflection": 5,
+      "droppedNotWord": 3,
+      "bytes": 34419
+    },
+    {
+      "id": "ielts",
+      "name": "雅思",
+      "count": 4872,
+      "matched": 5040,
+      "droppedInflection": 166,
+      "droppedNotWord": 2,
+      "bytes": 49141
+    },
+    {
+      "id": "toefl",
+      "name": "托福",
+      "count": 6954,
+      "matched": 6974,
+      "droppedInflection": 16,
+      "droppedNotWord": 4,
+      "bytes": 74202
+    },
+    {
+      "id": "gre",
+      "name": "GRE",
+      "count": 7491,
+      "matched": 7504,
+      "droppedInflection": 13,
+      "droppedNotWord": 0,
+      "bytes": 79378
+    },
+    {
+      "id": "core",
+      "name": "生活高频",
+      "count": 2947,
+      "matched": 2950,
+      "droppedInflection": 3,
+      "droppedNotWord": 0,
+      "bytes": 27626
+    }
+  ]
+}

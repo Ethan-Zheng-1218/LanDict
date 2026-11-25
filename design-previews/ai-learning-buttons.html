@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LanDict · AI 学习面板</title>
+  <link rel="stylesheet" href="../src/styles/tokens.css">
+  <style>
+    @font-face { font-family: 'Noto Sans SC'; src: url('../src/assets/fonts/NotoSansSC-VF.ttf') format('truetype'); font-display: swap; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: var(--app-backdrop); color: var(--text-primary); font: 14px/1.7 'Noto Sans SC', 'Microsoft YaHei', sans-serif; }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 2px solid var(--blue-primary); outline-offset: 3px; }
+    .preview { max-width: 920px; margin: 0 auto; padding: 36px 28px 64px; }
+    .preview-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 48px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 650; }
+    .brand img { width: 30px; height: 30px; object-fit: contain; }
+    .themes { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; border: 1px solid var(--border-soft); border-radius: var(--radius-control); background: var(--surface-glass); }
+    .themes button { border: 0; border-radius: 8px; padding: 5px 10px; color: var(--text-secondary); background: transparent; font-size: 12px; }
+    .themes button[aria-pressed="true"] { color: var(--blue-primary); background: var(--bg-active); }
+    .word { margin-bottom: 24px; }
+    .word h1 { margin: 0 0 4px; font-size: 30px; font-weight: 650; letter-spacing: -.5px; }
+    .word p { margin: 0; color: var(--text-secondary); }
+    .panel { overflow: hidden; border: 1px solid var(--border-default); border-radius: var(--radius-card); background: var(--bg-surface); box-shadow: var(--shadow-card); }
+    .panel-header { display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 14px 24px; background: var(--bg-soft); border-bottom: 1px solid var(--border-soft); }
+    .panel-header svg { width: 20px; height: 20px; color: var(--blue-primary); fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .panel-header h2 { margin: 0; font-size: 18px; font-weight: 650; }
+    .panel-header .chevron { margin-left: auto; width: 16px; height: 16px; color: var(--text-secondary); }
+    .panel-body { padding: 24px; }
+    .intro { margin: 0 0 22px; font-size: 15px; line-height: 1.85; }
+    .intro strong { font-weight: 600; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+    .tabs button { min-height: 32px; padding: 4px 15px; border: 1px solid transparent; border-radius: var(--radius-pill); background: var(--bg-soft); color: var(--text-secondary); font-size: 13px; line-height: 22px; transition: background .12s, color .12s; }
+    .tabs button:hover { background: var(--bg-active); color: var(--blue-primary); }
+    .tabs button[aria-selected="true"] { background: var(--blue-primary); color: var(--interactive-on-primary); font-weight: 600; }
+    .detail { min-height: 250px; }
+    .detail h3 { margin: 0 0 14px; font-size: 15px; font-weight: 600; }
+    .detail p { margin: 0 0 12px; font-size: 15px; line-height: 1.9; }
+    .en { font-family: 'Noto Sans SC', 'Segoe UI', sans-serif; }
+    .translation { display: block; margin-top: 3px; color: var(--text-secondary); font-size: 14px; }
+    .example + .example { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border-soft); }
+    .term { color: var(--blue-primary); font-weight: 550; }
+    .note { color: var(--text-secondary); }
+    [hidden] { display: none !important; }
+    @media (max-width: 560px) { .preview { padding: 22px 16px; } .preview-header { align-items: flex-start; flex-direction: column; margin-bottom: 30px; gap: 14px; } .panel-body { padding: 20px; } .panel-header { padding-inline: 20px; } .tabs { gap: 6px; } .tabs button { padding-inline: 12px; } }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="preview">
+    <header class="preview-header">
+      <div class="brand"><img src="../public/brand/landict.png" alt="">LanDict</div>
+      <div class="themes" role="group" aria-label="主题预览">
+        <button type="button" data-theme="blue" aria-pressed="true">晴空蓝</button>
+        <button type="button" data-theme="lime" aria-pressed="false">轻盈绿</button>
+        <button type="button" data-theme="black" aria-pressed="false">慕夜黑</button>
+      </div>
+    </header>
+    <div class="word"><h1>capture</h1><p>v. 捕获；拍摄；记录</p></div>
+    <section class="panel" aria-labelledby="ai-title">
+      <header class="panel-header">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m5 8 6 0M8 5v3c0 5-3 8-5 9m2-6c1 3 3 5 6 6M12 20l5-12 5 12m-8-4h6"/></svg>
+        <h2 id="ai-title">AI 翻译</h2>
+        <svg class="chevron" aria-hidden="true" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg>
+      </header>
+      <div class="panel-body">
+        <p class="intro"><strong>capture</strong> 的核心意思是“捕捉”。可以指抓住人或动物，也可以指用照片、文字记录瞬间，或吸引某人的注意。</p>
+        <div class="tabs" role="tablist" aria-label="单词学习">
+          <button type="button" role="tab" id="tab-examples" data-tab="examples" aria-controls="examples" aria-selected="true" tabindex="0">例句</button>
+          <button type="button" role="tab" id="tab-roots" data-tab="roots" aria-controls="roots" aria-selected="false" tabindex="-1">词根</button>
+          <button type="button" role="tab" id="tab-synonyms" data-tab="synonyms" aria-controls="synonyms" aria-selected="false" tabindex="-1">近义词</button>
+          <button type="button" role="tab" id="tab-antonyms" data-tab="antonyms" aria-controls="antonyms" aria-selected="false" tabindex="-1">反义词</button>
+          <button type="button" role="tab" id="tab-derivatives" data-tab="derivatives" aria-controls="derivatives" aria-selected="false" tabindex="-1">派生词</button>
+        </div>
+        <section class="detail" role="tabpanel" id="examples" aria-labelledby="tab-examples" tabindex="0">
+          <h3>在不同语境中使用 capture</h3>
+          <div class="example"><p class="en">The photographer <span class="term">captured</span> the beauty of the sunset.<span class="translation">摄影师捕捉到了日落的美。</span></p></div>
+          <div class="example"><p class="en">Her story <span class="term">captured</span> everyone's attention.<span class="translation">她的故事吸引了所有人的注意。</span></p></div>
+        </section>
+        <section class="detail" role="tabpanel" id="roots" aria-labelledby="tab-roots" tabindex="0" hidden>
+          <h3>从“抓住”理解这个词</h3>
+          <p><span class="term">cap / capt</span> 与拉丁语中“拿取、抓住”的含义有关。</p>
+          <p>capture 可以理解为“抓住”：抓住一个目标，是“捕获”；抓住一个瞬间，是“拍摄、记录”；抓住注意力，就是“吸引”。</p>
+          <p class="note">词根帮助建立含义联系，具体用法仍需结合语境理解。</p>
+        </section>
+        <section class="detail" role="tabpanel" id="synonyms" aria-labelledby="tab-synonyms" tabindex="0" hidden>
+          <h3>相近的意思，不同的侧重</h3>
+          <p><span class="term">catch</span>　抓住、接住，常用于日常表达。</p>
+          <p><span class="term">seize</span>　强调突然或用力夺取。</p>
+          <p><span class="term">record</span>　侧重记录声音、画面或信息。</p>
+          <p class="note">这些词只在部分语境下接近，不能直接互换。</p>
+        </section>
+        <section class="detail" role="tabpanel" id="antonyms" aria-labelledby="tab-antonyms" tabindex="0" hidden>
+          <h3>结合具体含义看反义表达</h3>
+          <p><span class="term">release</span>　释放。与 capture 表示“捕获、俘获”时形成对照。</p>
+          <p class="en">The animal was captured and later <span class="term">released</span>.<span class="translation">这只动物被捕获后又被放归。</span></p>
+          <p class="note">capture 表示“拍摄、记录”时，没有适用于所有场景的固定反义词。</p>
+        </section>
+        <section class="detail" role="tabpanel" id="derivatives" aria-labelledby="tab-derivatives" tabindex="0" hidden>
+          <h3>由 capture 延伸的表达</h3>
+          <p><span class="term">recapture</span>　v. 重新捕获；重新找回某种感受。re- 表示“再次”。</p>
+          <p><span class="term">capturer</span>　n. 捕获者。-er 表示执行动作的人。</p>
+          <p class="note">captured、capturing 属于词形变化，与派生词有所区别。</p>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script>
+    const tabs = [...document.querySelectorAll('[role="tab"]')];
+    function selectTab(tab, focus = false) {
+      tabs.forEach(item => { const active = item === tab; item.setAttribute('aria-selected', String(active)); item.tabIndex = active ? 0 : -1; document.getElementById(item.dataset.tab).hidden = !active; });
+      if (focus) tab.focus();
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => selectTab(tab));
+      tab.addEventListener('keydown', event => {
+        let next;
+        if (event.key === 'ArrowRight') next = (index + 1) % tabs.length;
+        if (event.key === 'ArrowLeft') next = (index + tabs.length - 1) % tabs.length;
+        if (event.key === 'Home') next = 0;
+        if (event.key === 'End') next = tabs.length - 1;
+        if (next !== undefined) { event.preventDefault(); selectTab(tabs[next], true); }
+      });
+    });
+    document.querySelectorAll('.themes button').forEach(button => button.addEventListener('click', () => {
+      document.documentElement.dataset.theme = button.dataset.theme;
+      document.querySelectorAll('.themes button').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+    }));
+  </script>
+</body>
+</html>

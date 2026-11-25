@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LanDict · 释义排版设计稿</title>
+<style>
+/* 外壳、字号、颜色全部照 src/styles/tokens.css 与 globals.css，和背单词页一致 */
+@font-face {
+  font-family: "Noto Sans SC";
+  src: url("../src/assets/fonts/NotoSansSC-VF.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+:root {
+  color-scheme: light;
+  font-family: "Noto Sans SC", sans-serif;
+  font-synthesis: none;
+  --bg-app:#f7fbff;--bg-surface:#ffffff;--bg-soft:#f1f7fd;--bg-active:#eaf4ff;
+  --blue-primary:#2f7cf6;--border-soft:#e8eef5;--border-default:#d9e6f2;
+  --text-primary:#102247;--text-secondary:#66758f;--text-muted:#94a3b8;
+  --status-mastered:#3f7f5f;--primary-gradient:linear-gradient(135deg,#498dff,#2472f3);
+  --interactive-on-primary:#ffffff;
+  --surface-content:rgb(255 255 255 / 74%);
+  --shadow-card:0 8px 24px rgb(42 79 120 / 7%);
+  --type-page-title:36px;--type-word-title:40px;--type-card-title:20px;
+  --type-body:16px;--type-secondary:14px;--type-muted:12px;
+  --font-size-xs:11px;
+  --spacing-xs:8px;--spacing-sm:12px;--spacing-md:16px;--spacing-lg:24px;--spacing-xl:32px;
+  --app-sidebar-width:184px;--shell-header-height:56px;
+  --page-top:28px;--page-inline:36px;--page-bottom:28px;--page-width:900px;
+  --radius-control:12px;--radius-card:16px;--radius-sm:10px;--radius-pill:999px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg-app); color: var(--text-primary); font: 400 var(--type-body)/1.5 "Noto Sans SC", sans-serif; }
+button { font: inherit; font-weight: 500; cursor: pointer; border: 0; background: none; color: inherit; }
+h1, h2, h3, strong, b { font-weight: 700; }
+kbd { font-family: inherit; font-size: var(--font-size-xs); line-height: 1; padding: 3px 5px; border-radius: 5px; background: var(--bg-soft); border: 1px solid var(--border-soft); color: var(--text-muted); }
+
+/* 外壳（照应用：侧栏 + 顶栏 + 内容列） */
+.app { display: grid; height: 100vh; grid-template-columns: var(--app-sidebar-width) minmax(0, 1fr); }
+.sidebar { display: flex; flex-direction: column; padding: 0 var(--spacing-sm) var(--spacing-md); border-right: 1px solid var(--border-soft); background: var(--bg-surface); }
+.sidebar-header { display: flex; min-height: var(--shell-header-height); align-items: center; justify-content: center; gap: var(--spacing-sm); margin: 0 calc(-1 * var(--spacing-sm)); padding: 0 var(--spacing-md); border-bottom: 1px solid var(--border-soft); }
+.brand-logo { display: grid; width: 36px; height: 36px; place-items: center; border-radius: 24%; background: linear-gradient(142deg,#59bbfc,#2b7fff); color: #fff; }
+.brand-name { font-size: var(--type-card-title); }
+.brand-tagline { font-size: var(--type-muted); color: var(--text-muted); }
+.nav { display: flex; flex-direction: column; gap: 6px; padding-top: var(--spacing-md); }
+.nav-item { display: flex; min-height: 44px; align-items: center; gap: 13px; padding: 12px 14px; border-radius: var(--radius-control); color: var(--text-secondary); font-size: var(--type-body); text-align: left; }
+.nav-item.active { color: var(--blue-primary); background: var(--bg-active); font-weight: 700; }
+.sidebar-bottom { margin-top: auto; }
+.workspace { display: grid; min-width: 0; grid-template-rows: var(--shell-header-height) minmax(0, 1fr); }
+.titlebar { display: flex; align-items: center; justify-content: flex-end; border-bottom: 1px solid var(--border-soft); background: var(--bg-surface); }
+.content { min-height: 0; overflow: auto; padding: var(--page-top) var(--page-inline) var(--page-bottom); background: var(--surface-content); }
+.content-column { display: flex; width: min(var(--page-width), 100%); margin: 0 auto; flex-direction: column; }
+
+/* 会话页 */
+.study-screen { display: flex; flex-direction: column; }
+.study-head { display: flex; min-height: 40px; align-items: center; gap: 14px; }
+.study-step { color: var(--text-secondary); font-size: var(--type-secondary); font-variant-numeric: tabular-nums; }
+.study-bar { flex: 1; min-width: 80px; height: 6px; border: 1px solid var(--border-soft); border-radius: 3px; background: var(--bg-soft); overflow: hidden; }
+.study-bar i { display: block; height: 100%; background: var(--blue-primary); border-radius: 3px; }
+.study-book { color: var(--text-muted); font-size: var(--type-muted); }
+.study-body { display: flex; flex: 1; flex-direction: column; padding: 10px 0; }
+.study-group { display: flex; flex-direction: column; align-items: center; }
+.word { margin: 24px 0 0; font-size: var(--type-word-title); font-weight: 700; letter-spacing: -.025em; line-height: 1.22; }
+.word.phrase { font-size: var(--type-page-title); }
+.phonetics { display: flex; gap: 22px; margin-top: 12px; }
+.phonetic-btn { display: inline-flex; align-items: center; gap: 7px; padding: 5px 8px; border-radius: 9px; color: var(--text-secondary); font-size: var(--type-secondary); }
+.phonetic-btn b { color: var(--text-muted); font-size: var(--font-size-xs); font-weight: 500; }
+.answer-note { display: flex; justify-content: center; align-items: center; gap: 9px; margin: 22px 0 14px; color: var(--text-secondary); font-size: var(--type-secondary); }
+.tag { padding: 3px 8px; border-radius: 6px; font-size: var(--type-muted); font-weight: 500; background: #e9f3ec; color: var(--status-mastered); }
+.meaning-card { display: grid; width: 100%; grid-template-columns: minmax(240px, 38fr) minmax(0, 62fr); overflow: hidden; border: 1px solid var(--border-soft); border-radius: var(--radius-card); background: var(--bg-surface); box-shadow: var(--shadow-card); text-align: left; }
+.meaning-card.single { grid-template-columns: minmax(0, 1fr); }
+.meaning-left { padding: 20px 22px; border-right: 1px solid var(--border-soft); min-width: 0; }
+.meaning-card.single .meaning-left { border-right: 0; }
+.meaning-right { padding: 20px 22px; min-width: 0; }
+
+/* ── 这一版要看的就是它：每个词性一行，行内用逗号/分号串起来 ── */
+.meanings { display: flex; flex-direction: column; gap: 10px; margin: 12px 0 0; }
+.meaning-row { display: flex; align-items: baseline; gap: 10px; }
+.meaning-pos { flex: 0 0 44px; color: var(--text-muted); font-size: var(--type-secondary); font-weight: 500; }
+.meaning-line { flex: 1; min-width: 0; margin: 0; color: var(--text-primary); font-size: var(--type-body); font-weight: 400; line-height: 1.75; overflow-wrap: anywhere; }
+
+.sect { margin: 0; }
+.sect + .sect { margin-top: 17px; padding-top: 15px; border-top: 1px solid var(--border-soft); }
+.sect-label { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: var(--type-muted); font-weight: 700; }
+.sect-label i { display: block; width: 3px; height: 12px; border-radius: 2px; background: var(--blue-primary); }
+.example-en { margin: 0; font-size: var(--type-body); line-height: 1.8; }
+.example-cn { margin: 6px 0 0; color: var(--text-secondary); font-size: var(--type-secondary); line-height: 1.7; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chips span { padding: 5px 10px; border-radius: var(--radius-pill); background: var(--bg-soft); color: var(--text-secondary); font-size: var(--type-secondary); }
+.chips em { color: var(--text-muted); font-style: normal; font-size: var(--type-muted); }
+.study-actions { padding-top: 6px; }
+.quiet-btn { display: inline-flex; height: 48px; min-width: 200px; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; border: 1px solid var(--border-default); border-radius: var(--radius-control); background: var(--bg-surface); font-size: var(--type-body); }
+.grade-row { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+.grade-btn { display: inline-flex; height: 48px; flex: 1 1 0; max-width: 200px; align-items: center; justify-content: center; gap: 10px; border: 1px solid transparent; border-radius: var(--radius-control); font-size: var(--type-body); }
+.grade-btn.primary { background: var(--primary-gradient); color: var(--interactive-on-primary); }
+.grade-btn.secondary { border-color: var(--border-default); background: var(--bg-surface); }
+.hint-line { display: flex; justify-content: center; gap: 16px; margin-top: 16px; color: var(--text-muted); font-size: var(--type-muted); }
+
+/* 设计稿自己的部分 */
+.preview-bar { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: var(--spacing-lg); padding-top: var(--spacing-md); border-top: 1px dashed var(--border-default); color: var(--text-muted); font-size: var(--type-muted); }
+.samples { margin-top: var(--spacing-xl); }
+.samples h2 { margin: 0 0 var(--spacing-md); font-size: var(--type-card-title); }
+.sample { margin-top: var(--spacing-lg); }
+.sample-title { display: flex; align-items: baseline; gap: 10px; margin: 0 0 var(--spacing-sm); color: var(--text-secondary); font-size: var(--type-secondary); }
+.sample-title b { color: var(--text-primary); font-size: var(--type-body); }
+.before { color: var(--text-secondary); font-size: var(--type-secondary); line-height: 1.9; }
+.before .old-first { font-size: var(--type-card-title); font-weight: 700; color: var(--text-primary); }
+.before .old-rest { color: var(--text-secondary); }
+.rules { margin-top: var(--spacing-xl); padding-top: var(--spacing-md); border-top: 1px solid var(--border-soft); color: var(--text-secondary); font-size: var(--type-secondary); line-height: 1.9; }
+.rules h2 { margin: 0 0 var(--spacing-xs); font-size: var(--type-card-title); color: var(--text-primary); }
+.rules li { margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-logo">W</div>
+      <div>
+        <div class="brand-name">LanDict</div>
+        <div class="brand-tagline">Less is more</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <button class="nav-item">首页</button>
+      <button class="nav-item">翻译</button>
+      <button class="nav-item">阅读</button>
+      <button class="nav-item">生词本</button>
+      <button class="nav-item active">背单词</button>
+    </nav>
+    <div class="sidebar-bottom"><button class="nav-item">设置</button></div>
+  </aside>
+
+  <div class="workspace">
+    <header class="titlebar"></header>
+    <main class="content">
+      <div class="content-column">
+
+        <section class="study-screen">
+          <div class="study-head">
+            <button class="phonetic-btn">←</button>
+            <span class="study-step">第 2 / 30</span>
+            <div class="study-bar"><i style="width: 6%"></i></div>
+            <span class="study-book">四级词库 · 背新单词</span>
+          </div>
+
+          <div class="study-body">
+            <div class="study-group">
+              <h2 class="word">happen</h2>
+              <div class="phonetics">
+                <button class="phonetic-btn"><b>UK</b>/ˈhæpən/</button>
+                <button class="phonetic-btn"><b>US</b>/ˈhæpən/</button>
+              </div>
+              <div class="answer-note"><span class="tag">你选了「认识」</span><span>答对，档位升一级：这个词 1 天后再见</span></div>
+              <div class="meaning-card">
+                <div class="meaning-left">
+                  <div class="meanings">
+                    <div class="meaning-row">
+                      <span class="meaning-pos">verb</span>
+                      <p class="meaning-line">(尤指偶然)发生，出现，作为结果发生；碰巧，恰好；(向对方表示异议或不悦等)</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="meaning-right">
+                  <div class="sect">
+                    <h4 class="sect-label"><i></i>例句</h4>
+                    <p class="example-en">You'll never guess what's happened!</p>
+                    <p class="example-cn">你根本猜不到出了什么事！</p>
+                  </div>
+                  <div class="sect">
+                    <h4 class="sect-label"><i></i>常见搭配</h4>
+                    <div class="chips">
+                      <span>whatever happens</span>
+                      <span>see what happens</span>
+                      <span>It happened that</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="study-actions">
+            <div style="display:flex;justify-content:center"><button class="quiet-btn"><kbd>↑</kbd>加入生词本</button></div>
+            <div class="grade-row">
+              <button class="grade-btn secondary"><kbd>←</kbd>上一步</button>
+              <button class="grade-btn secondary"><kbd>↓</kbd>记错了</button>
+              <button class="grade-btn primary">下一个<kbd>→</kbd></button>
+            </div>
+            <div class="hint-line"><span>双击 <kbd>←</kbd> 返回上一个单词</span><span><kbd>空格</kbd>发音</span><span>双击 <kbd>→</kbd> 不再出现</span></div>
+          </div>
+        </section>
+
+        <div class="preview-bar">设计稿 · 下面是同一套排版在别的词上的样子</div>
+
+        <section class="samples">
+          <h2>多词性、释义多的时候</h2>
+
+          <div class="sample">
+            <p class="sample-title"><b>low</b>四个词性，每个词性取前 4 条</p>
+            <div class="meaning-card single">
+              <div class="meaning-left">
+                <div class="meanings">
+                  <div class="meaning-row"><span class="meaning-pos">adj.</span><p class="meaning-line">低的，矮的；离地面近的，在底部的；低于通常(或平均)数量的，不足的；低声的，小声的</p></div>
+                  <div class="meaning-row"><span class="meaning-pos">adv.</span><p class="meaning-line">低，向下；低声地；低价地</p></div>
+                  <div class="meaning-row"><span class="meaning-pos">noun</span><p class="meaning-line">低水平，低点；低气压区；低速挡</p></div>
+                  <div class="meaning-row"><span class="meaning-pos">verb</span><p class="meaning-line">(牛)哞哞叫</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sample">
+            <p class="sample-title"><b>state</b>三个词性；释义之间：相近用逗号、差别大用分号</p>
+            <div class="meaning-card single">
+              <div class="meaning-left">
+                <div class="meanings">
+                  <div class="meaning-row"><span class="meaning-pos">noun</span><p class="meaning-line">状态，状况，情况；国家，政府；州，邦；<b>the States</b> 美国</p></div>
+                  <div class="meaning-row"><span class="meaning-pos">adj.</span><p class="meaning-line">国家的，政府的；州的；正式的，礼仪上的</p></div>
+                  <div class="meaning-row"><span class="meaning-pos">verb</span><p class="meaning-line">陈述，说明，声明；(尤指正式地)表明，宣称</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sample">
+            <p class="sample-title"><b>a bad lot</b>词组卡：没有音标行，只要释义和例句</p>
+            <div class="meaning-card">
+              <div class="meaning-left">
+                <div class="meanings">
+                  <div class="meaning-row"><span class="meaning-pos">习语</span><p class="meaning-line">不诚实的人，骗子</p></div>
+                </div>
+              </div>
+              <div class="meaning-right">
+                <div class="sect">
+                  <h4 class="sect-label"><i></i>英文释义</h4>
+                  <p class="example-en">(old-fashioned, BrE) a person who is dishonest</p>
+                </div>
+                <div class="sect">
+                  <h4 class="sect-label"><i></i>例句</h4>
+                  <p class="example-en">He is truly a bad lot who betrayed his friends for money.</p>
+                  <p class="example-cn">他是个为了钱出卖朋友的坏人。</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sample">
+            <p class="sample-title">对照：现在线上那版（序号 + 大小不一 + 一条一行）</p>
+            <div class="meaning-card single">
+              <div class="meaning-left">
+                <div class="before">
+                  <div><span class="old-first">1 (尤指偶然)发生，出现</span></div>
+                  <div><span class="old-rest">2 (作为结果)出现，发生</span></div>
+                  <div><span class="old-rest">3 碰巧；恰好</span></div>
+                  <div><span class="old-rest">4 (向对方表示异议或不悦等)</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="rules">
+          <h2>这一版的规则</h2>
+          <ul>
+            <li>字号统一：释义行全部 16px，不再有"第一条大、后面小"。</li>
+            <li>左对齐；每个词性一行，词性只在<b>行首固定宽度的那一列</b>出现一次——卡片左上角不再另挂一个词性标签（重复了）。</li>
+            <li>不要序号；相近的释义之间用<b>逗号</b>，差别大的用<b>分号</b>。</li>
+            <li>每个词性最多 4 条释义，超出的不显示（这一版没有「展开全部」，按你说的先去掉）。</li>
+            <li>词组卡不显示音标行，只有中文释义 + 英文释义 + 例句。</li>
+          </ul>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

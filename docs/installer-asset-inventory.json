@@ -1,0 +1,180 @@
+{
+  "originals": [
+    {
+      "file": "C:/Users/Ethan/Desktop/design ui/07安装包/a.png",
+      "width": 1254,
+      "height": 1254,
+      "colorType": 2,
+      "bytes": 1071839,
+      "sha256": "13039b8b8902df50925532e5a830f7a8a156c90cd6b86ea26bd9d1ce208ca0b2"
+    },
+    {
+      "file": "C:/Users/Ethan/Desktop/design ui/07安装包/b.png",
+      "width": 2048,
+      "height": 2048,
+      "colorType": 2,
+      "bytes": 3216779,
+      "sha256": "91fe267b95f7ddcac07f2e520c0e11c2839ef8a34782430ce89335b7a059ad45"
+    },
+    {
+      "file": "C:/Users/Ethan/Desktop/design ui/07安装包/c.png",
+      "width": 813,
+      "height": 596,
+      "colorType": 2,
+      "bytes": 394950,
+      "sha256": "c67564df54fbdc519644d9bc2f15498e1b899021dca6dfb48f3ff356ecca891a"
+    },
+    {
+      "file": "C:/Users/Ethan/Desktop/design ui/07安装包/d.png",
+      "width": 785,
+      "height": 623,
+      "colorType": 2,
+      "bytes": 410720,
+      "sha256": "75bc31773b14f6f6ddee62f76a6d58cd465106878b717de02d46ab1bc146af8f"
+    },
+    {
+      "file": "C:/Users/Ethan/Desktop/design ui/07安装包/e.png",
+      "width": 767,
+      "height": 616,
+      "colorType": 2,
+      "bytes": 425241,
+      "sha256": "e1a9f29f25fde0a012be48d58e113541d6bdf7252aefe9411caee2551a4e9f23"
+    },
+    {
+      "file": "icon.png",
+      "width": 1254,
+      "height": 1254,
+      "colorType": 2,
+      "bytes": 1095097,
+      "sha256": "6b2c8459d3be58cc3b063621f4375386854a45b3aed3b82865e9c7ab5bf40df2"
+    }
+  ],
+  "assets": [
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-1.png",
+      "role": "paper",
+      "width": 185,
+      "height": 212,
+      "colorType": 2,
+      "bytes": 5597,
+      "sha256": "8aa33527e255f41288a4437e2553f1229d0652561397560c89c919a506f412d0"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-2.png",
+      "role": "class=\"icon\"",
+      "width": 120,
+      "height": 104,
+      "colorType": 6,
+      "bytes": 17387,
+      "sha256": "1e567ab237735fa5ab2f88b6534176eac1b10c22253e09b72c3149023bacf184"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-3.png",
+      "role": "brand-icon",
+      "width": 120,
+      "height": 104,
+      "colorType": 6,
+      "bytes": 17387,
+      "sha256": "1e567ab237735fa5ab2f88b6534176eac1b10c22253e09b72c3149023bacf184"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-4.png",
+      "role": "wordmark",
+      "width": 198,
+      "height": 61,
+      "colorType": 6,
+      "bytes": 16052,
+      "sha256": "219dca47ab3a19705be63779835628cb9d8503e0a7aa9b0b0c47910d492c517b"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-5.png",
+      "role": "id=\"check\"",
+      "width": 51,
+      "height": 50,
+      "colorType": 6,
+      "bytes": 4290,
+      "sha256": "047c6768b74e83733ee9f837334869eca92c43f2ceeb99079aff4a1bf1e36cca"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-6.png",
+      "role": "cloud-bank",
+      "width": 764,
+      "height": 214,
+      "colorType": 6,
+      "bytes": 166853,
+      "sha256": "8710e624f58542b40edb47f2999d356f4e4974c56cae770c74c169ddac2fe079"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-7.png",
+      "role": "float-cloud",
+      "width": 136,
+      "height": 90,
+      "colorType": 6,
+      "bytes": 13182,
+      "sha256": "53fc16042c7095c35bd761b588b7fdcd40e9d0e1e43b93be518c46aeb540b906"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-8.png",
+      "role": "earthSource",
+      "width": 2048,
+      "height": 2048,
+      "colorType": 2,
+      "bytes": 3618615,
+      "sha256": "211f73be87f0488c12e818b1ea7a61c7a9bb16f862fb8c429007fe60e18cf778"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-9.png",
+      "role": "sheepSources",
+      "width": 960,
+      "height": 960,
+      "colorType": 2,
+      "bytes": 638967,
+      "sha256": "6861616caacecfdc7d87813b92edf0b4e6aba86c5710e8dfad04e9b03d66b180"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-10.png",
+      "role": "embedded",
+      "width": 960,
+      "height": 960,
+      "colorType": 2,
+      "bytes": 621564,
+      "sha256": "c1dda02d4cd69789684fd3d607b8f296dd139dedf4f08d777d3e971b332ae12e"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-11.png",
+      "role": "embedded",
+      "width": 960,
+      "height": 960,
+      "colorType": 2,
+      "bytes": 625693,
+      "sha256": "3ca72d1cf2b4e5be3f4fe50688a8c9ff68e4c557b8a4da7ab1b5c96eedb6471d"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-12.png",
+      "role": "embedded",
+      "width": 960,
+      "height": 960,
+      "colorType": 2,
+      "bytes": 633503,
+      "sha256": "2a80e82d08729200e6fd4ef779731d7215813656f1e255812fded7f8b334085a"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-13.png",
+      "role": "embedded",
+      "width": 960,
+      "height": 960,
+      "colorType": 2,
+      "bytes": 641608,
+      "sha256": "77214860ad3c47064229ba7e988bf2b6840b1e090ec6c05e9551d2ba48250bb9"
+    },
+    {
+      "file": ".firecrawl\\installer-audit\\embedded-14.png",
+      "role": "embedded",
+      "width": 960,
+      "height": 960,
+      "colorType": 2,
+      "bytes": 630803,
+      "sha256": "ec8284812b016dbb283d4383b8b6a0ac6eed6c1f6320775030b21ed351e7cff0"
+    }
+  ]
+}

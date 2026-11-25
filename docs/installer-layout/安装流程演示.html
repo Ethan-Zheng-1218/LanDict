@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <title>LanDict 安装流程演示</title>
+  <style>
+    :root {
+      --canvas-w: 730px;
+      --canvas-h: 583px;
+      --titlebar-h: 39px;
+      --scene-top: 225px;
+      --scene-bottom: 525px;
+      --earth-cx: 365px;
+      --earth-cy: 522px;
+      --earth-r: 195px;
+      --sheep-w: 132px;
+      --sheep-h: 118.3px;
+      --sheep-top: 240.15px;
+      --progress-y: 508px;
+      --percent-y: 500px;
+      /* Primary buttons only need to wrap their four characters; the secondary sits to the left. */
+      --button-x: 578px;
+      --button-y: 530px;
+      --button-w: 92px;
+      --button-h: 34px;
+      --panel: #eff6fc;
+      --ink: #23334b;
+      --link: #2c83b9;
+      --accent: #429dd5;
+    }
+    * { box-sizing: border-box; }
+    [x-cloak] { display: none !important; }
+    body { margin: 0; min-height: 100vh; padding: 28px 24px 60px; display: flex; flex-direction: column;
+      align-items: center; gap: 14px; background: #dfe6ee; color: var(--ink);
+      font-family: "Segoe UI", "Microsoft YaHei", sans-serif; }
+    .toolbar { display: flex; gap: 10px; align-items: center; font-size: 13px; color: #53657a; }
+    .toolbar button { padding: 5px 12px; border: 1px solid #b9cfe0; border-radius: 13px; background: #f4f9fd; cursor: pointer; font: inherit; }
+    .demo-notes { width: min(900px, 100%); font-size: 13px; line-height: 1.75; color: #53657a; }
+    .demo-notes strong { font-weight: 600; color: #34465c; }
+    .stage { position: relative; width: var(--canvas-w); height: var(--canvas-h); transition: height 220ms ease; }
+    .stage.zoomed { width: calc(var(--canvas-w) * 2); height: calc(var(--canvas-h) * 2); }
+    .window {
+      position: absolute; left: 0; top: 0; width: var(--canvas-w); height: var(--canvas-h);
+      transform-origin: top left; overflow: hidden; border-radius: 10px;
+      background: linear-gradient(#f4f3f6, #bedff0);
+      transition: transform 220ms ease, opacity 200ms ease;
+    }
+    .stage.zoomed .window { transform: scale(2); }
+    .window.closing { opacity: 0; transform: scale(.965); }
+    .window.minimized { transform: translateY(430px) scale(.16); opacity: .12; pointer-events: none; }
+    .paper { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .28; }
+    .titlebar { position: absolute; inset: 0 0 auto; height: var(--titlebar-h); z-index: 6; display: flex; align-items: center; }
+    .titlebar-icon { margin-left: 12px; width: 26px; height: 26px; }
+    .titlebar-text { margin-left: 8px; font-size: 15px; color: #3d4757; }
+    .titlebar-actions { margin-left: auto; display: flex; height: 100%; }
+    .titlebar-button { width: 45px; height: var(--titlebar-h); border: 0; background: transparent; cursor: default;
+      display: grid; place-items: center; transition: background 110ms ease, box-shadow 110ms ease, color 110ms ease; color: #4f536a; }
+    .titlebar-button:hover { background: #ffffffcc; box-shadow: inset 0 0 0 1px #c3d6e4; }
+    .titlebar-button:active { background: #ffffff; }
+    .titlebar-button.close:hover { background: #e0574f; color: #fff; }
+    .titlebar-button.close:active { background: #cd4a43; }
+    .glyph-minus { width: 11px; height: 1.4px; background: currentColor; }
+    .glyph-close { position: relative; width: 12px; height: 12px; }
+    .glyph-close::before, .glyph-close::after { content: ""; position: absolute; left: 0; top: 5px; width: 12px; height: 1.4px; background: currentColor; }
+    .glyph-close::before { transform: rotate(45deg); }
+    .glyph-close::after { transform: rotate(-45deg); }
+    .brand { position: absolute; left: 228px; top: 70px; width: 103px; height: 89px; z-index: 3; }
+    .wordmark { position: absolute; left: 343px; top: 96px; width: 180px; height: 55.5px; z-index: 3; }
+    .status { position: absolute; left: 30px; top: 177px; width: 670px; height: 38px; z-index: 3;
+      display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 21px; }
+    .status-check { width: 30px; height: 31px; }
+    .scene { position: absolute; left: 0; top: var(--scene-top); width: var(--canvas-w); height: calc(var(--scene-bottom) - var(--scene-top)); overflow: hidden; z-index: 1; }
+    .scene-origin { position: absolute; left: 0; top: calc(-1 * var(--scene-top)); width: var(--canvas-w); height: var(--canvas-h); }
+    .earth { position: absolute; left: calc(var(--earth-cx) - var(--earth-r)); top: calc(var(--earth-cy) - var(--earth-r));
+      width: calc(var(--earth-r) * 2); height: calc(var(--earth-r) * 2); border-radius: 50%; }
+    .earth-clip { position: absolute; inset: 0; clip-path: circle(47.5% at 50% 50%); }
+    .earth-core { width: 100%; height: 100%; animation: earth-spin 19.5s linear infinite; }
+    .earth-outline { position: absolute; inset: 0; width: 100%; height: 100%; }
+    @keyframes earth-spin { to { transform: rotate(360deg); } }
+    .cloud-small { position: absolute; left: 465px; top: 282px; width: 112px; height: 74px; z-index: 2; }
+    .cloud-band { position: absolute; left: 0; top: 324px; width: 730px; height: 198px; z-index: 6; }
+    .sheep-stage { position: absolute; left: calc(var(--earth-cx) - var(--sheep-w) / 2); top: var(--sheep-top);
+      width: var(--sheep-w); height: var(--sheep-h); z-index: 5; }
+    .sheep-stage img { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+    .sheep-stage img.active { opacity: 1; }
+    .sheep-shadow { position: absolute; left: 50%; width: 84px; height: 13px; margin-left: -42px;
+      border-radius: 50%; background: radial-gradient(closest-side, #55637a5c, #55637a26 58%, #55637a00); filter: blur(.8px); }
+    .mist { position: absolute; left: 0; top: 440px; width: 730px; height: 143px; z-index: 8;
+      background: linear-gradient(#eff6fc00 0%, #eff6fce6 30%, #eff6fc 42%, #eff6fc 100%); }
+    .progress { position: absolute; left: 60px; top: var(--progress-y); width: 550px; height: 17px; z-index: 9; }
+    .progress-track { position: absolute; inset: 0; border-radius: 9px; background: #deedf4; box-shadow: inset 0 0 0 1px #b9d6e4; }
+    .progress-fill { position: absolute; left: 1px; top: 1px; height: 15px; width: 0; border-radius: 8px;
+      background-image: url("assets/progress-texture.png"); background-size: auto 15px; background-repeat: repeat-x; transition: width 240ms ease; }
+    .percent { position: absolute; left: 623px; top: var(--percent-y); width: 68px; height: 31px; z-index: 9;
+      display: flex; align-items: center; justify-content: flex-end; font-size: 22px; }
+    .primary { position: absolute; left: var(--button-x); top: var(--button-y); width: var(--button-w); height: var(--button-h);
+      border: 1px solid #409bd0; border-radius: 17px; background: linear-gradient(110deg, #58afe0, #3692ce); color: #fff;
+      font: 14px/1 "Segoe UI", "Microsoft YaHei", sans-serif; z-index: 9; cursor: pointer;
+      transition: background 120ms ease, box-shadow 120ms ease, transform 120ms ease; }
+    .primary:hover:enabled { background: linear-gradient(110deg, #49a6dc, #2c87c4); box-shadow: 0 3px 9px #398abb33; }
+    .primary:active:enabled { transform: translateY(1px); }
+    .primary:disabled { background: #cbdfe9; border-color: #cbdfe9; color: #7895a7; cursor: default; }
+    .secondary { position: absolute; left: 494px; top: var(--button-y); width: 76px; height: var(--button-h);
+      border: 1px solid #a9c6da; border-radius: 17px; background: #eaf4fb; color: #347ba8;
+      font: 14px/1 "Segoe UI", "Microsoft YaHei", sans-serif; z-index: 9; cursor: pointer; }
+    .secondary:hover { background: #dceaf6; }
+    /* --- install location row, left of the primary button --- */
+    /* Row 1 of the preparation page: where to install. */
+    .path-row { position: absolute; left: 62px; top: 514px; width: 424px; height: 30px; z-index: 9;
+      display: flex; align-items: center; gap: 8px; font-size: 14px; }
+    .path-row label { white-space: nowrap; color: #34465c; }
+    .path-input { flex: 1; min-width: 0; height: 30px; padding: 0 10px; border: 1px solid #a9c6da; border-radius: 8px;
+      background: #fbfdff; color: #2b3a4d; font: 13px/1 "Segoe UI", "Microsoft YaHei", sans-serif; }
+    .browse { height: 30px; padding: 0 10px; border: 1px solid #a9c6da; border-radius: 8px; background: #eaf4fb;
+      color: #347ba8; font: 13px/1 "Segoe UI", "Microsoft YaHei", sans-serif; cursor: pointer; }
+    .browse:hover { background: #dceaf6; }
+    /* Row 2: the licence agreement moved down into the freed space. */
+    .consent-row { position: absolute; left: 62px; top: 552px; height: 22px; display: flex;
+      align-items: center; gap: 7px; font-size: 14px; z-index: 9; }
+    /* --- plain option pages (no artwork), like the maintenance dialog --- */
+    .dialog-page { position: absolute; left: 0; top: var(--titlebar-h); width: 730px; height: calc(var(--canvas-h) - var(--titlebar-h)); z-index: 7; }
+    .dialog-brand { position: absolute; left: 228px; top: 31px; width: 103px; height: 89px; }
+    .dialog-wordmark { position: absolute; left: 343px; top: 57px; width: 180px; height: 55.5px; }
+    .dialog-title { position: absolute; left: 30px; top: 138px; width: 670px; height: 38px; text-align: center; font-size: 21px; }
+    .option-card { position: absolute; left: 92px; top: 196px; width: 546px; padding: 18px 24px; border-radius: 12px;
+      background: #fbfdffcc; box-shadow: 0 1px 0 #ffffff, inset 0 0 0 1px #d3e3ee; font-size: 14px; }
+    .option-line { display: flex; align-items: center; gap: 8px; padding: 9px 0; }
+    .option-note { margin: 4px 0 0 22px; color: #6b7f92; font-size: 12px; line-height: 1.6; }
+    .checkbox { appearance: none; width: 14px; height: 14px; margin: 0; border: 1px solid #98b4c8; border-radius: 3px; background: #f8fcff; cursor: pointer; position: relative; }
+    .checkbox:hover { border-color: #3e97ca; }
+    .checkbox:checked { background: var(--accent); border-color: var(--accent); }
+    .checkbox:checked::after { content: ""; position: absolute; left: 4px; top: 1px; width: 3px; height: 7px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+    .radio { appearance: none; width: 14px; height: 14px; margin: 0; border: 1px solid #98b4c8; border-radius: 50%; background: #f8fcff; cursor: pointer; position: relative; }
+    .radio:checked { border-color: var(--accent); }
+    .radio:checked::after { content: ""; position: absolute; left: 3px; top: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .agreement-link { padding: 0; border: 0; background: none; color: var(--link); font: inherit; cursor: pointer; }
+    .agreement-link:hover { color: #176da5; text-decoration: underline; text-underline-offset: 3px; }
+    dialog { width: min(620px, calc(100vw - 40px)); max-height: min(470px, calc(100vh - 48px)); padding: 0; border: 1px solid #c4d8e5; border-radius: 14px; background: #f7fbfe; color: var(--ink); }
+    dialog::backdrop { background: #182e4b26; }
+    .agreement-heading { margin: 0; padding: 20px 24px 12px; font-size: 18px; }
+    .agreement-text { margin: 0; padding: 0 24px 18px; max-height: 320px; overflow-y: auto; font: 14px/1.8 "Segoe UI", "Microsoft YaHei", sans-serif; white-space: pre-wrap; }
+    .agreement-actions { padding: 12px 24px; border-top: 1px solid #dce8f0; display: flex; justify-content: flex-end; }
+    .agreement-actions button { padding: 7px 15px; border: 1px solid #b9d3e3; border-radius: 15px; background: #e7f2f9; color: #347ba8; cursor: pointer; }
+    .result-card { width: var(--canvas-w); padding: 22px 26px; border-radius: 12px; background: #f7fbfe; color: var(--ink); }
+    .result-card h2 { margin: 0 0 10px; font-size: 18px; }
+    .result-card ul { margin: 0 0 16px; padding-left: 20px; line-height: 1.9; font-size: 14px; }
+    .result-card button { padding: 8px 18px; border: 1px solid #409bd0; border-radius: 17px; background: #4aa4d8; color: #fff; font: inherit; cursor: pointer; }
+    .minimized-bar { width: var(--canvas-w); padding: 10px 16px; border-radius: 10px; background: #f7fbfe; display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+  </style>
+  <script defer src="vendor/alpine.min.js"></script>
+</head>
+<body>
+  <div class="toolbar">
+    <span>演示控制：</span>
+    <button type="button" @click="$refs.stage.classList.toggle('zoomed')">放大 2×（检查清晰度）</button>
+  </div>
+  <div class="stage" x-ref="stage" x-data="installerDemo()" x-cloak>
+    <section class="window" :class="{ closing: closing, minimized: state === 'minimized' }" x-show="!shownResult" aria-label="LanDict 安装程序演示">
+      <img class="paper" src="assets/paper.png" alt="" aria-hidden="true">
+      <header class="titlebar">
+        <img class="titlebar-icon" src="assets/app-icon.png" alt="" aria-hidden="true">
+        <span class="titlebar-text">LanDict Setup</span>
+        <div class="titlebar-actions">
+          <button class="titlebar-button" type="button" title="最小化" aria-label="最小化" @click="minimize()"><span class="glyph-minus"></span></button>
+          <button class="titlebar-button close" type="button" title="关闭" aria-label="关闭" @click="close()"><span class="glyph-close"></span></button>
+        </div>
+      </header>
+
+      <!-- 已装过：维护页 -->
+      <div class="dialog-page" x-show="state === 'maintenance'" x-cloak>
+        <img class="dialog-brand" src="assets/brand.png" alt="" aria-hidden="true">
+        <img class="dialog-wordmark" src="assets/wordmark.png" alt="" aria-hidden="true">
+        <p class="dialog-title">LanDict 已经安装了</p>
+        <div class="option-card">
+          <label class="option-line"><input class="radio" type="radio" name="maintenance" x-model="maintenance" value="reinstall"><span>添加/重新安装组件</span></label>
+          <label class="option-line"><input class="radio" type="radio" name="maintenance" x-model="maintenance" value="uninstall"><span>卸载 LanDict</span></label>
+          <p class="option-note">卸载不会删除查询历史与生词本等学习数据。</p>
+        </div>
+      </div>
+
+      <!-- 小羊画面：安装页 / 安装中 / 完成 -->
+      <div x-show="state === 'prepare' || state === 'installing' || state === 'done'">
+        <img class="brand" src="assets/brand.png" alt="" aria-hidden="true">
+        <img class="wordmark" src="assets/wordmark.png" alt="" aria-hidden="true">
+        <div class="status">
+          <img class="status-check" src="assets/check.png" alt="" x-show="state === 'done'" x-cloak>
+          <span x-text="state === 'done' ? 'LanDict is ready for you.' : 'LanDict is getting ready for you.'"></span>
+        </div>
+        <div class="scene">
+          <div class="scene-origin">
+            <div class="earth">
+              <div class="earth-clip"><img class="earth-core" src="assets/earth-core.png" alt="" aria-hidden="true"></div>
+              <img class="earth-outline" src="assets/earth-outline.png" alt="" aria-hidden="true">
+            </div>
+            <img class="cloud-small" src="assets/cloud.png" alt="" aria-hidden="true">
+            <div class="sheep-stage">
+              <div class="sheep-shadow"></div>
+              <template x-for="index in 24" :key="index">
+                <img :src="`assets/sheep-run-${index - 1}.png`" :class="{ active: frame === index - 1 }" alt="" aria-hidden="true">
+              </template>
+            </div>
+            <img class="cloud-band" src="assets/clouds.png" alt="" aria-hidden="true">
+          </div>
+        </div>
+        <div class="mist" aria-hidden="true"></div>
+
+        <div class="path-row" x-show="state === 'prepare'">
+          <label for="install-path">选择安装地址</label>
+          <input class="path-input" id="install-path" type="text" x-model="installPath" spellcheck="false">
+          <button class="browse" type="button">浏览</button>
+        </div>
+        <div class="consent-row" x-show="state === 'prepare'">
+          <input class="checkbox" id="consent" type="checkbox" x-model="agreed" aria-label="我已阅读并同意软件使用协议">
+          <label for="consent">我已阅读并同意</label>
+          <button class="agreement-link" type="button" @click="$refs.agreement.showModal()">《软件使用协议》</button>
+        </div>
+
+        <div class="progress" x-show="state !== 'prepare'" x-cloak>
+          <div class="progress-track"></div>
+          <div class="progress-fill" :style="`width: ${percent * 5.48}px`"></div>
+        </div>
+        <div class="percent" x-show="state !== 'prepare'" x-cloak x-text="`${percent}%`"></div>
+
+        <button class="primary" id="start-install" type="button" x-show="state === 'prepare'" :disabled="!agreed" @click="startInstall()">开始安装</button>
+        <button class="primary" id="finish-install" type="button" x-show="state === 'done'" x-cloak @click="finish()">完成安装</button>
+      </div>
+
+      <button class="primary" id="next-step" type="button" x-show="state === 'maintenance'" x-cloak @click="next()">下一步</button>
+    </section>
+
+    <div class="result-card" x-show="shownResult" x-cloak>
+      <h2>安装完成（演示）</h2>
+      <ul>
+        <li>安装位置：<span x-text="installPath"></span></li>
+        <li>开机自启：<span x-text="autostart ? '已开启' : '未开启'"></span></li>
+        <li>保留本地安装包：<span x-text="keepInstaller ? '是' : '否（安装成功后自动删除）'"></span></li>
+        <li>桌面快捷方式：<span x-text="desktopShortcut ? '已创建' : '未创建'"></span></li>
+      </ul>
+      <button type="button" @click="restart()">重新演示一遍</button>
+    </div>
+
+    <div class="minimized-bar" x-show="state === 'minimized'" x-cloak @click="restore()">
+      <img src="assets/app-icon.png" alt="" style="width:22px;height:22px">
+      <span>LanDict 安装程序已最小化 —— 点击这里还原窗口</span>
+    </div>
+
+    <dialog x-ref="agreement" aria-labelledby="agreement-heading" @click="if ($event.target === $refs.agreement) $refs.agreement.close()">
+      <h1 class="agreement-heading" id="agreement-heading">软件使用协议</h1>
+      <pre class="agreement-text" x-text="agreementText"></pre>
+      <div class="agreement-actions"><button type="button" @click="$refs.agreement.close()">返回安装选项</button></div>
+    </dialog>
+  </div>
+
+  <div class="demo-notes">
+    <p><strong>这是可交互的安装流程示范</strong>，不是真实安装，也不会改动你的系统。默认就是准备页；用地址参数可以跳到其它状态：<code>?state=maintenance</code>（已装维护页）、<code>?state=prepare</code>、<code>?state=agreement</code>、<code>?state=installing</code>、<code>?state=done</code>。</p>
+    <p>本轮改动：去掉“开机自启”（该开关只在软件“设置—通用”里）、“保留本地安装包”和“创建桌面快捷方式”两个选项（安装器默认保留安装包并创建桌面快捷方式）；腾出的位置改为第一行“选择安装地址”，协议勾选下移到第二行。</p>
+    <p>窗口本身不再画任何额外描边或投影，圆角与画面边缘由窗口自身决定。进度为演示数据。</p>
+  </div>
+
+  <script>
+    const AGREEMENT_TEXT = `LanDict 软件使用协议
+版本：2026-10-08
+
+请在安装前阅读本协议。选择“我已阅读并同意软件使用协议”并开始安装，表示你同意以下使用说明。
+
+一、软件用途
+LanDict 提供查词、阅读、朗读和生词学习功能。词典释义、翻译和语音结果供学习参考；不同内容来源可能存在差异或错误。
+
+二、本地数据
+查询历史、生词本和软件设置保存在当前设备的用户数据目录中。普通卸载不会主动删除这些学习数据。请自行备份需要长期保留的内容；更换设备、清理系统或主动删除用户数据可能导致内容丢失。
+
+三、联网功能
+使用在线文章、在线发音或 AI 翻译时，软件会向相应服务发送完成该功能所需的请求。AI 翻译会使用你配置的服务地址、模型和 API Key，并发送待处理的单词、文本或附近句子。第三方服务的可用性、收费和数据处理规则由该服务提供方决定。请根据需要配置或关闭相关功能。
+
+四、安装选项
+开机自启由你选择，默认关闭，安装后可在“设置—通用”中调整。创建桌面快捷方式由你选择，默认开启。保留本地安装包默认开启；取消此选项后，仅在本次安装成功并关闭安装窗口后删除本次运行的安装 EXE。安装失败或取消时保留该 EXE。
+
+五、第三方内容
+软件中使用的词典、字体和其他第三方内容，适用其各自的许可和权利说明。本协议不替代第三方许可，也不授予超出相关权利说明的使用权限。
+
+六、选择与退出
+你可以在确认本协议前退出安装。安装后可通过 Windows 的应用管理或软件卸载程序移除 LanDict。
+`;
+    function installerDemo() {
+      return {
+        state: 'prepare',
+        closing: false,
+        shownResult: false,
+        agreed: false,
+        autostart: false,
+        keepInstaller: true,
+        desktopShortcut: true,
+        maintenance: 'reinstall',
+        installPath: 'C:\\Users\\Ethan\\AppData\\Local\\Programs\\LanDict',
+        percent: 0,
+        frame: 0,
+        timer: null,
+        frameTimer: null,
+        previousState: 'prepare',
+        agreementText: AGREEMENT_TEXT,
+        init() {
+          this.frameTimer = setInterval(() => { this.frame = (this.frame + 1) % 24; }, 1000 / 24);
+          const wanted = new URLSearchParams(location.search).get('state');
+          if (wanted === 'agreement') { this.state = 'prepare'; this.$nextTick(() => this.$refs.agreement.showModal()); }
+          if (wanted === 'maintenance') this.state = 'maintenance';
+          if (wanted === 'prepare') this.state = 'prepare';
+          if (wanted === 'installing') { this.agreed = true; this.state = 'installing'; this.percent = 61; }
+          if (wanted === 'done') { this.agreed = true; this.state = 'done'; this.percent = 100; }
+          if (wanted === 'result') { this.agreed = true; this.state = 'done'; this.percent = 100; this.shownResult = true; }
+        },
+        next() {
+          if (this.state === 'maintenance') this.state = 'prepare';
+        },
+        startInstall() {
+          this.state = 'installing';
+          this.percent = 0;
+          const steps = [[0, 0], [6, 8], [18, 24], [32, 37], [52, 61], [70, 74], [86, 88], [100, 96], [100, 100]];
+          let index = 0;
+          const advance = () => {
+            if (index >= steps.length) { this.state = 'done'; return; }
+            const [target, delay] = steps[index++];
+            this.timer = setTimeout(() => { this.percent = target; advance(); }, delay * 12);
+          };
+          advance();
+        },
+        finish() {
+          this.closing = true;
+          setTimeout(() => { this.closing = false; this.shownResult = true; }, 220);
+        },
+        close() {
+          this.closing = true;
+          setTimeout(() => { this.closing = false; this.shownResult = true; }, 220);
+        },
+        minimize() { this.previousState = this.state; this.state = 'minimized'; },
+        restore() { this.state = this.previousState || 'prepare'; },
+        restart() {
+          clearTimeout(this.timer);
+          Object.assign(this, { shownResult: false, closing: false, state: 'prepare', percent: 0, agreed: false,
+            autostart: false, keepInstaller: true, desktopShortcut: true });
+        },
+      };
+    }
+  </script>
+</body>
+</html>

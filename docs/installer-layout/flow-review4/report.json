@@ -1,0 +1,16 @@
+[
+  {
+    "file": "installing.png",
+    "state": "installing",
+    "size": "900x1000",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "done.png",
+    "state": "done",
+    "size": "900x1000",
+    "zoom": 1,
+    "issues": []
+  }
+]

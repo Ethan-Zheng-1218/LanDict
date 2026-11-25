@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LanDict · 学习内容紧凑版</title>
+  <link rel="stylesheet" href="study-refinement-preview.css">
+</head>
+<body>
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute">
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5c2.8-.8 5.2-.3 8 1.4v12c-2.8-1.7-5.2-2.2-8-1.4z"/><path d="M20 5.5c-2.8-.8-5.2-.3-8 1.4v12c2.8-1.7 5.2-2.2 8-1.4z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v9H5z"/><path d="M9.5 19v-6h5v6"/></symbol>
+    <symbol id="i-translate" viewBox="0 0 24 24"><path d="M4 6h9M8.5 3v3M6 6c.7 3.2 2.8 5.7 6 7"/><path d="M11 8c-.9 2.2-2.8 4.2-6 5.5M14 20l3.5-9 3.5 9M15.2 17h4.6"/></symbol>
+    <symbol id="i-reading" viewBox="0 0 24 24"><path d="M4 5.5c2.8-.8 5.2-.3 8 1.4v12c-2.8-1.7-5.2-2.2-8-1.4z"/><path d="M20 5.5c-2.8-.8-5.2-.3-8 1.4v12c2.8-1.7 5.2-2.2 8-1.4z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4"/></symbol>
+    <symbol id="i-study" viewBox="0 0 24 24"><path d="m3 9 9-5 9 5-9 5z"/><path d="M7 12v4.5c2.7 2 7.3 2 10 0V12M21 9v6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.7-.7-1.7.9-1.9-2.1-2.1-1.9.9-1.7-.7L10.5 2h-3l-.7 2-1.7.7-1.9-.9-2.1 2.1.9 1.9-.7 1.7-2 .7v3l2 .7.7 1.7-.9 1.9 2.1 2.1 1.9-.9 1.7.7.7 2h3l.7-2 1.7-.7 1.9.9 2.1-2.1-.9-1.9.7-1.7z" transform="translate(3 0) scale(.75)"/></symbol>
+    <symbol id="i-plus-book" viewBox="0 0 24 24"><path d="M5 5.5c2.3-.6 4.4-.2 7 1.4v11c-2.6-1.6-4.7-2-7-1.4z"/><path d="M19 5.5c-2.3-.6-4.4-.2-7 1.4v11c2.6-1.6 4.7-2 7-1.4z"/><path d="M17 9v4M15 11h4"/></symbol>
+    <symbol id="i-review" viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.4-5.3"/><path d="M19 4v5h-5"/></symbol>
+  </svg>
+
+  <nav class="preview-toolbar" aria-label="预览页面切换">
+    <a href="study-home-refinement-preview.html" aria-current="page">学习内容</a>
+    <a href="study-session-refinement-preview.html">学习卡片</a>
+  </nav>
+
+  <div class="preview-canvas">
+    <div class="app-shell">
+      <header class="brandbar">
+        <span class="brand-mark"><svg class="icon"><use href="#i-book"/></svg></span>
+        <span class="brand-name">LanDict</span>
+      </header>
+      <div class="titlebar" aria-hidden="true"><div class="window-controls"><span>—</span><span>□</span><span>×</span></div></div>
+      <aside class="sidebar">
+        <nav class="nav-list" aria-label="主导航">
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-home"/></svg><span>首页</span></a>
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-translate"/></svg><span>翻译</span></a>
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-reading"/></svg><span>阅读</span></a>
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-file"/></svg><span>生词本</span></a>
+          <a class="nav-item active" href="#" aria-current="page"><svg class="icon"><use href="#i-study"/></svg><span>背单词</span></a>
+        </nav>
+        <div class="settings-link"><a class="nav-item" href="#"><svg class="icon"><use href="#i-settings"/></svg><span>设置</span></a></div>
+      </aside>
+
+      <main class="main">
+        <div class="content">
+          <header class="section-heading">
+            <h1>学习内容</h1>
+            <div class="study-progress-summary">
+              <strong>四级词库</strong>
+              <span>已学 57 / 3,845</span>
+              <span class="progress-track" aria-label="学习进度 1.5%"><i></i></span>
+              <span>还剩 3,788 条</span>
+            </div>
+          </header>
+
+          <section class="source-panel" aria-label="选择学习内容">
+            <div class="source-row books">
+              <div class="source-label">词库</div>
+              <div class="chip-grid">
+                <button class="chip selected" type="button">四级 <small>3,845</small></button>
+                <button class="chip" type="button">六级 <small>5,406</small></button>
+                <button class="chip" type="button">考研 <small>4,800</small></button>
+                <button class="chip" type="button">高考 <small>3,669</small></button>
+                <button class="chip" type="button">雅思 <small>4,872</small></button>
+                <button class="chip" type="button">托福 <small>6,954</small></button>
+                <button class="chip" type="button">GRE <small>7,491</small></button>
+                <button class="chip" type="button">生活高频 <small>2,947</small></button>
+              </div>
+              <span></span>
+            </div>
+            <div class="source-row">
+              <div class="source-label">词组库</div>
+              <div class="chip-row">
+                <button class="chip" type="button">固定习语 <small>3,091</small></button>
+                <button class="chip" type="button">常见搭配 <small>715</small></button>
+                <button class="chip" type="button">多词词条 <small>997</small></button>
+              </div>
+              <span></span>
+            </div>
+            <div class="source-row">
+              <div class="source-label">生词本</div>
+              <div class="chip-row"><button class="chip" type="button">我的生词本 <small>4 词</small></button></div>
+              <a class="text-link" href="#">管理生词本 →</a>
+            </div>
+          </section>
+
+          <section class="mode-grid" aria-label="学习方式">
+            <article class="mode-card">
+              <div class="mode-body">
+                <span class="mode-icon new"><svg class="icon"><use href="#i-plus-book"/></svg></span>
+                <h2>背新单词</h2>
+                <div class="mode-number">20<span>词 · 今日</span></div>
+                <div class="mode-caption">四级词库还剩 3,788 条</div>
+              </div>
+              <footer class="mode-footer">
+                <div class="daily-control">
+                  <span class="daily-label">每天背</span>
+                  <span class="segmented" aria-label="每日背词数量"><span>10</span><span class="active">20</span><span>30</span><span>50</span></span>
+                </div>
+                <button class="action-button" type="button">开始</button>
+              </footer>
+            </article>
+
+            <article class="mode-card">
+              <div class="mode-body">
+                <span class="mode-icon review"><svg class="icon"><use href="#i-review"/></svg></span>
+                <h2>复习单词</h2>
+                <div class="mode-number">0<span>条 · 待复习</span></div>
+                <div class="mode-caption">现在没有到期的，先背新词</div>
+              </div>
+              <footer class="mode-footer">
+                <a class="text-link" href="#">查看复习节奏 →</a>
+                <span class="empty-action">暂无复习任务</span>
+              </footer>
+            </article>
+          </section>
+          <p class="estimate">今天预计用时：新学约 5 分钟</p>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

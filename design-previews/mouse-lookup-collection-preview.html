@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LanDict 鼠标取词收藏预览</title>
+  <style>
+    :root { font-family: "Noto Sans SC", "Microsoft YaHei UI", sans-serif; color: #17312b; background: #eff4f1; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; }
+    .backdrop { width: min(760px, calc(100vw - 32px)); height: 410px; padding: 72px 42px; overflow: hidden; color: #557168; background: linear-gradient(135deg, #dce9e2, #c9ddd4); border-radius: 18px; }
+    .backdrop p { width: 88%; margin: 0 0 16px; font: 18px/1.8 Georgia, serif; }
+    .card { width: 224px; margin-top: -180px; padding: 14px 14px 12px; color: #1d312d; background: #fbfdfa; border: 1px solid #d2e2da; border-radius: 14px; box-shadow: 0 14px 30px rgb(38 75 61 / 22%); }
+    .head { display: flex; align-items: center; gap: 8px; }
+    h1 { flex: 1; margin: 0; font-size: 26px; line-height: 1.15; letter-spacing: -.6px; }
+    .close, .collect { border: 0; background: transparent; color: #478b71; cursor: pointer; }
+    .close { padding: 0 0 0 5px; font-size: 26px; line-height: 1; color: #59736a; }
+    #collected { position: absolute; opacity: 0; pointer-events: none; }
+    .collect { display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 28px; padding: 0; color: #5b8d78; transition: .16s ease; }
+    .star { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.45; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    #collected:checked + .collect .star { fill: currentColor; }
+    #collected:checked + .collect { color: #368366; }
+    .phonetic { margin: 10px 0 11px; color: #5f786e; font-size: 13px; text-align: left; }
+    .phonetic button { display: inline-flex; align-items: center; gap: 5px; padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; font: inherit; }
+    .section { padding: 11px 0; border-top: 1px solid #dce8e1; }
+    .section-title { margin: 0 0 6px; color: #6d897f; font-size: 13px; font-weight: 600; }
+    .meaning { margin: 0; color: #243c35; font-size: 14px; line-height: 1.55; }
+    .ai { padding-bottom: 8px; }
+    .ai p { margin: 0; color: #3f5d53; font-size: 13px; line-height: 1.55; }
+    .copy { display: flex; align-items: center; gap: 5px; padding-top: 9px; border-top: 1px solid #dce8e1; color: #6c877d; font-size: 12px; }
+    .copy svg { width: 14px; height: 14px; }
+    .hint { margin-top: 14px; color: #5c746a; font-size: 13px; text-align: center; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="backdrop" aria-hidden="true"><p>The team used Microsoft products to build a concise vocabulary workflow.</p><p>Hover a word to view its meaning, pronunciation and AI explanation.</p></div>
+    <article class="card" aria-label="鼠标取词卡片">
+      <header class="head">
+        <h1>Microsoft</h1>
+        <input id="collected" type="checkbox" aria-label="收藏到本地生词本" />
+        <label class="collect" for="collected" title="收藏／取消收藏">
+          <svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.7 2.5 5.05 5.57.81-4.03 3.93.95 5.55L12 16.38l-4.98 2.62.95-5.55-4.03-3.93 5.57-.81Z" /></svg>
+        </label>
+        <button class="close" aria-label="关闭">×</button>
+      </header>
+      <p class="phonetic"><button aria-label="播放英式发音">🔊 <span>英 /ˈmaɪkrəsɒft/</span></button></p>
+      <section class="section"><h2 class="section-title">中文释义</h2><p class="meaning">（美国）微软公司</p></section>
+      <section class="section ai"><h2 class="section-title">AI解释</h2><p>展开后调用 AI，可能产生接口费用。</p></section>
+      <footer class="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M5 16H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>复制内容</footer>
+    </article>
+    <p class="hint">点击圆角星形可预览收藏与取消收藏状态。</p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,32 @@
+CC-CEDICT
+=========
+
+来源：https://cc-cedict.org/  （下载地址 https://cc-cedict.org/editor/editor_export_cedict.php?c=gzip）
+下载时间：2026-10-08
+词条数：125,215
+随仓库文件：data/cedict/cedict.txt
+
+CC-CEDICT 是 Paul Denisowski 于 1997 年发起的 CEDICT 计划的延续，由社区维护，
+目标是提供一份可完整下载的中英词典，并附带拼音。
+
+许可
+----
+
+This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
+International License.
+https://creativecommons.org/licenses/by-sa/4.0/
+
+使用要求：
+
+1. 署名：必须注明数据来自 CC-CEDICT。
+2. 相同方式共享：基于该数据改进或增补后产生的数据，需以相同许可发布。
+
+本项目的处理方式
+----------------
+
+LanDict 把 cedict.txt 转换成中文反查索引（data/cedict-sqlite/landict-cedict.db），
+该索引属于 CC-CEDICT 的改编数据，同样以 CC BY-SA 4.0 提供。
+LanDict 的应用程序代码不是该数据的改编作品，不受此许可约束。
+应用内的署名位置：设置页「关于」区块的「词典数据」一行。
+
+本文件与 cedict.txt 一并保留在仓库中，不应删除。

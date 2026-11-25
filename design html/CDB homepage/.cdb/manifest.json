@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "projectId": "cdb-homepage",
+  "name": "CDB homepage",
+  "source": {
+    "kind": "cdb-native",
+    "root": "."
+  },
+  "entry": "index.html",
+  "pages": [
+    {
+      "id": "home",
+      "name": "Home",
+      "entry": "index.html",
+      "route": "/",
+      "captureRoot": "[data-codex-root]",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      }
+    }
+  ],
+  "assets": {
+    "roots": [
+      "assets"
+    ],
+    "allowRemote": false
+  },
+  "mapping": {
+    "attribute": "data-codex-id",
+    "requireUnique": true
+  },
+  "runtime": {
+    "dom": "static",
+    "spa": false
+  }
+}

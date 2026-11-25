@@ -1,0 +1,10 @@
+{
+  "canvas": [
+    730,
+    583
+  ],
+  "self_contained": true,
+  "checkbox_count": 4,
+  "unchanged_upper_scene_max_channel_difference": 0,
+  "checks": "three browser states and CSS zoom 200 percent; not Windows DPI or actual installation tests"
+}

@@ -1,0 +1,5 @@
+Positive prompt:
+The illustrated little sheep runs in place toward the right in a repeating light quadruped trot. Keep the same fixed three-quarter view, round face, two eyes, pink cheeks, ears, scalloped cream wool and warm brown crayon texture throughout. The front and rear legs extend, tuck and alternate in diagonal pairs with a small natural body rise and fall. The small legs are understated pale peach color strokes partly hidden under the wool, without distinct hooves, shoe outlines, soles or joints. The head stays steady and the sheep stays centered at the same size. The camera is locked. Plain white background. Make three consistent strides with smooth transitions and return toward the initial pose. Hand-drawn simple children's illustration, preserving the reference character.
+
+Negative prompt:
+extra legs, missing legs, hands, boots, shoes, hooves, sole lines, clear joints, realistic animal, 3d render, changing face, changing eyes, turning around, camera motion, zoom, character traveling across frame, static bouncing without leg movement, morphing wool, added objects, text

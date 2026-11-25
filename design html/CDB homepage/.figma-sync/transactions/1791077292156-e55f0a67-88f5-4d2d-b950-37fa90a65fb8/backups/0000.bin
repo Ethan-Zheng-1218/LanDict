@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PuDict 首页 · CDB homepage</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-frame" data-codex-root data-codex-id="page-root">
+      <aside class="app-sidebar" data-codex-id="sidebar">
+        <header class="sidebar-header" data-codex-id="brand-area">
+          <div class="brand" data-codex-id="brand">
+            <span class="brand-mark" data-codex-id="brand-mark">P</span>
+            <span class="brand-name" data-codex-id="brand-name">PuDict</span>
+          </div>
+        </header>
+        <nav class="main-navigation" aria-label="主导航" data-codex-id="main-navigation">
+          <a class="nav-item active" data-codex-id="nav-home" href="#"><span class="nav-icon">⌕</span>首页</a>
+          <a class="nav-item" data-codex-id="nav-query" href="#"><span class="nav-icon">文</span>翻译</a>
+          <a class="nav-item" data-codex-id="nav-reading" href="#"><span class="nav-icon">▣</span>阅读</a>
+          <a class="nav-item" data-codex-id="nav-vocabulary" href="#"><span class="nav-icon">□</span>生词本</a>
+        </nav>
+        <footer class="sidebar-footer" data-codex-id="sidebar-footer">
+          <a class="nav-item" data-codex-id="nav-settings" href="#"><span class="nav-icon">⚙</span>设置</a>
+        </footer>
+      </aside>
+
+      <section class="app-workspace" data-codex-id="hero">
+        <header class="titlebar" data-codex-id="titlebar">
+          <div class="daily-quote" data-codex-id="quote-block">
+            <p class="quote-english" data-codex-id="eyebrow">“The limits of my language mean the limits of my world.”</p>
+            <p class="quote-chinese" data-codex-id="title">语言的边界，就是我世界的边界。 <span>—— 路德维希·维特根斯坦</span></p>
+          </div>
+          <div class="window-controls" data-codex-id="window-controls" aria-label="窗口控制">
+            <button data-codex-id="window-minimize" type="button" aria-label="最小化">−</button>
+            <button data-codex-id="window-maximize" type="button" aria-label="最大化">□</button>
+            <button data-codex-id="window-close" type="button" aria-label="关闭">×</button>
+          </div>
+        </header>
+
+        <div class="app-content" data-codex-id="content">
+          <section class="home-page" data-codex-id="home-page">
+            <form class="lookup-form" data-codex-id="search-form">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <input data-codex-id="search-input" aria-label="输入需要查询的内容" placeholder="输入你要查询的内容" />
+              <button data-codex-id="primary-action" type="button">查询</button>
+            </form>
+
+            <section class="home-history" aria-labelledby="history-title" data-codex-id="history-section">
+              <header class="history-header" data-codex-id="history-header">
+                <h2 id="history-title" data-codex-id="description">查询记录</h2>
+                <div class="history-actions" data-codex-id="history-actions">
+                  <button data-codex-id="clear-history" type="button">⌫ 清空记录</button>
+                  <span aria-hidden="true"></span>
+                  <a data-codex-id="view-history" href="#">查看查询历史 <b>→</b></a>
+                </div>
+              </header>
+              <div class="history-card" data-codex-id="history-card">
+                <section class="history-group" data-codex-id="history-today" aria-label="今天">
+                  <h3>今天</h3>
+                  <button data-codex-id="history-item-1" type="button"><span>serendipity</span><b>›</b></button>
+                  <button data-codex-id="history-item-2" type="button"><span>climate change</span><b>›</b></button>
+                </section>
+                <section class="history-group" data-codex-id="history-yesterday" aria-label="昨天">
+                  <h3>昨天</h3>
+                  <button data-codex-id="history-item-3" type="button"><span>The weather is getting warmer.</span><b>›</b></button>
+                  <button data-codex-id="history-item-4" type="button"><span>take advantage of</span><b>›</b></button>
+                </section>
+                <section class="history-group" data-codex-id="history-before" aria-label="之前">
+                  <h3>之前</h3>
+                  <button data-codex-id="history-item-5" type="button"><span>artificial intelligence</span><b>›</b></button>
+                  <button data-codex-id="history-item-6" type="button"><span>I didn't mean to hurt you.</span><b>›</b></button>
+                </section>
+              </div>
+            </section>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

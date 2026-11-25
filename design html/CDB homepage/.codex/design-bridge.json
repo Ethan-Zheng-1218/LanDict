@@ -1,0 +1,37 @@
+{
+  "version": 3,
+  "runtimeIdentity": {
+    "kind": "cdb-0.9-responsive-v2",
+    "protocolVersion": 16,
+    "pageIrSchemaVersion": 2,
+    "exactBuild": "0.9.0+codex.20260829100031"
+  },
+  "figmaUrl": "",
+  "figmaReady": false,
+  "changeCount": 0,
+  "appliedChangeCount": 0,
+  "pendingChangeCount": 0,
+  "designSnapshotPath": "",
+  "syncConflicts": [],
+  "syncConflictPath": "",
+  "lastResolvedConflictPath": "",
+  "lastConflictResolution": "",
+  "activePageId": "home",
+  "pages": [
+    {
+      "id": "home",
+      "name": "Home",
+      "path": "/",
+      "entry": "index.html",
+      "route": "/",
+      "sourceHash": "152767edc11a9a8067315fa5593cf73742a57c32061ff371f24a3c0fd4e27817",
+      "projectSourceHash": "152767edc11a9a8067315fa5593cf73742a57c32061ff371f24a3c0fd4e27817",
+      "acceptsFigmaSeed": false,
+      "syncState": "not_imported",
+      "figmaReady": false,
+      "lastSentAt": "",
+      "nodeCount": 0
+    }
+  ],
+  "updatedAt": "2026-10-04T01:28:12.179Z"
+}

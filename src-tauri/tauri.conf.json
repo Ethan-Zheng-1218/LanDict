@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "LanDict",
+  "version": "0.1.11",
+  "identifier": "com.pudict.desktop",
+  "build": {
+    "beforeDevCommand": "pnpm prepare:translation && pnpm dev",
+    "beforeBuildCommand": "pnpm prepare:translation && pnpm build",
+    "devUrl": "http://localhost:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "LanDict",
+        "width": 1180,
+        "height": 760,
+        "minWidth": 920,
+        "minHeight": 640,
+        "decorations": true
+      }
+    ],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "resources": {
+      "../tools/local-translation/prepare-background.ps1": "local-translation-bootstrap/prepare.ps1",
+      "../tools/local-translation/worker.py": "local-translation-bootstrap/worker.py",
+      "../tools/local-translation/NOTICE.md": "local-translation-bootstrap/NOTICE.md",
+      "target/local-translation/MODEL-LICENSE.txt": "local-translation-bootstrap/MODEL-LICENSE.txt",
+      "target/local-translation/runtime/concrt140.dll": "local-translation-bootstrap/crt/concrt140.dll",
+      "target/local-translation/runtime/msvcp140.dll": "local-translation-bootstrap/crt/msvcp140.dll",
+      "target/local-translation/runtime/msvcp140_1.dll": "local-translation-bootstrap/crt/msvcp140_1.dll",
+      "target/local-translation/runtime/msvcp140_2.dll": "local-translation-bootstrap/crt/msvcp140_2.dll",
+      "target/local-translation/runtime/msvcp140_atomic_wait.dll": "local-translation-bootstrap/crt/msvcp140_atomic_wait.dll",
+      "target/local-translation/runtime/msvcp140_codecvt_ids.dll": "local-translation-bootstrap/crt/msvcp140_codecvt_ids.dll",
+      "target/local-translation/runtime/vcruntime140.dll": "local-translation-bootstrap/crt/vcruntime140.dll",
+      "target/local-translation/runtime/vcruntime140_1.dll": "local-translation-bootstrap/crt/vcruntime140_1.dll",
+      "../data/ecdict-sqlite-28/stardict-slim.db": "dictionaries/stardict.db",
+      "../data/oxford-sqlite/landict-oxford.db": "dictionaries/landict-oxford.db",
+      "../data/cedict-sqlite/landict-cedict.db": "dictionaries/landict-cedict.db"
+    },
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.ico", "icons/icon.icns"]
+  }
+}

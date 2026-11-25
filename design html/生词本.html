@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LanDict — 生词本原型</title>
+<style>
+  :root{
+    --bg:#eef3f8;
+    --panel:#ffffff;
+    --sidebar:#f8fafc;
+    --line:#e7edf4;
+    --text:#10233f;
+    --muted:#8b9ab0;
+    --blue:#2f6fe4;
+    --blue-2:#edf4ff;
+    --green:#42a36b;
+    --shadow:0 20px 60px rgba(39,65,105,.12);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+
+  /* 全透明滚动条：保留滚动能力，不显示轨道与滑块 */
+  *{
+    scrollbar-width:none;
+  }
+  *::-webkit-scrollbar{width:0;height:0}
+  *::-webkit-scrollbar-track{background:transparent}
+  *::-webkit-scrollbar-thumb{background:transparent}
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% 0%, #f7fbff 0, transparent 40%),
+      linear-gradient(180deg,#f3f7fb 0%,#eaf0f6 100%);
+    color:var(--text);
+    font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif;
+    display:grid;
+    place-items:center;
+    padding:28px;
+  }
+  button,input,select,textarea{font:inherit}
+  button{cursor:pointer}
+  .app{
+    width:min(1180px,94vw);
+    height:min(780px,92vh);
+    min-height:680px;
+    background:var(--panel);
+    border:1px solid #dce5ef;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:190px 1fr;
+    grid-template-rows:46px 1fr;
+  }
+  .titlebar{
+    grid-column:1/-1;
+    display:grid;
+    grid-template-columns:190px 1fr auto;
+    align-items:center;
+    border-bottom:1px solid var(--line);
+    background:#fbfdff;
+    user-select:none;
+  }
+  .brand{
+    height:100%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 18px;
+    border-right:1px solid var(--line);
+    font-weight:700;
+  }
+  .logo{
+    width:28px;height:28px;border-radius:8px;
+    display:grid;place-items:center;
+    background:linear-gradient(145deg,#367be8,#235ec9);
+    color:#fff;font-family:Georgia,serif;font-size:17px;
+    box-shadow:0 5px 14px rgba(47,111,228,.25)
+  }
+  .title-quote{
+    color:#6f8098;
+    font-family:Georgia,serif;
+    font-size:12px;
+    padding-left:18px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .window-controls{display:flex;height:100%}
+  .wc{
+    width:46px;height:100%;
+    border:0;background:transparent;color:#5e6f86;
+    font-size:15px;
+  }
+  .wc:hover{background:#edf2f7}
+  .wc.close:hover{background:#e5484d;color:#fff}
+
+  .sidebar{
+    background:var(--sidebar);
+    border-right:1px solid var(--line);
+    padding:18px 12px 14px;
+    display:flex;flex-direction:column;
+    gap:6px;
+  }
+  .nav{
+    width:100%;border:0;background:transparent;
+    border-radius:11px;
+    padding:11px 12px;
+    display:flex;align-items:center;gap:11px;
+    color:#465a75;font-size:14px;text-align:left;
+  }
+  .nav:hover{background:#f0f4f9}
+  .nav.active{background:var(--blue-2);color:var(--blue);font-weight:600}
+  .icon{width:18px;display:inline-grid;place-items:center;font-size:16px}
+  .sidebar-spacer{flex:1}
+  .settings{border-top:1px solid var(--line);padding-top:10px;margin-top:8px}
+
+  .main{
+    min-width:0;min-height:0;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 300px;
+    background:#fff;
+    transition:grid-template-columns .22s ease;
+    position:relative;
+  }
+  .main.detail-collapsed{grid-template-columns:minmax(0,1fr) 0}
+  .main.detail-collapsed .detail{
+    padding-left:0;padding-right:0;
+    border-left:0;
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .main.detail-collapsed .detail-divider{display:none}
+  .library{
+    min-width:0;min-height:0;
+    padding:32px 34px 28px;
+    overflow:auto;
+  }
+  .detail{
+    border-left:1px solid var(--line);
+    background:#fbfcfe;
+    min-width:0;min-height:0;
+    overflow:auto;
+    padding:24px 20px;
+    opacity:1;
+    transition:opacity .16s ease, padding .22s ease;
+    position:relative;
+  }
+  .detail-divider{
+    position:absolute;
+    left:calc(100% - 300px - 7px);
+    top:50%;
+    transform:translateY(-50%);
+    z-index:30;
+    width:14px;height:52px;
+    border:1px solid #dbe5f2;
+    background:#fff;
+    border-radius:999px;
+    box-shadow:0 5px 16px rgba(38,65,99,.10);
+    color:#71839a;
+    display:grid;
+    place-items:center;
+    font-size:12px;
+    transition:left .22s ease, background .15s ease, color .15s ease;
+  }
+  .detail-divider:hover{background:#edf4ff;color:var(--blue)}
+  .head{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:20px;margin-bottom:18px
+  }
+  .head h1{
+    margin:0;font-size:28px;letter-spacing:-.5px
+  }
+  .count{color:#93a1b3;font-size:12px;margin-top:5px}
+  .review-btn{
+    border:0;background:var(--blue);color:#fff;
+    border-radius:10px;padding:10px 14px;
+    font-size:13px;font-weight:700
+  }
+
+  .controls{
+    display:grid;
+    grid-template-columns:minmax(180px,1fr) auto auto;
+    gap:10px;align-items:center;
+    margin-bottom:14px
+  }
+  .search{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid #dce5f0;border-radius:10px;
+    padding:0 11px;background:#fff;
+    height:38px
+  }
+  .search input{
+    width:100%;border:0;outline:0;background:transparent;
+    color:#324762;font-size:13px
+  }
+  .search input::placeholder{color:#a7b3c3}
+  .select{
+    height:38px;border:1px solid #dce5f0;border-radius:10px;
+    background:#fff;color:#5f728b;padding:0 10px;font-size:12px;
+    outline:0
+  }
+
+  .tabs{
+    display:flex;gap:8px;align-items:center;
+    margin-bottom:16px
+  }
+  .tab{
+    border:0;background:#f3f6fa;color:#697b91;
+    border-radius:999px;padding:7px 12px;font-size:12px
+  }
+  .tab.active{background:var(--blue-2);color:var(--blue);font-weight:700}
+
+  .batchbar{
+    display:none;
+    align-items:center;justify-content:space-between;
+    border:1px solid #d8e5fb;background:#f8fbff;
+    border-radius:10px;padding:9px 12px;margin-bottom:12px;
+    font-size:12px;color:#50657f
+  }
+  .batchbar.show{display:flex}
+  .batch-actions{display:flex;gap:6px}
+  .batch-actions button{
+    border:1px solid #dce6f4;background:#fff;color:#5c6f87;
+    border-radius:8px;padding:6px 9px;font-size:11px
+  }
+
+  .word-list{
+    border-top:1px solid var(--line);
+  }
+  .word-row{
+    display:grid;
+    grid-template-columns:28px minmax(0,1fr) auto;
+    gap:12px;
+    padding:16px 4px;
+    border-bottom:1px solid var(--line);
+    cursor:pointer;
+  }
+  .word-row:hover{background:#fbfdff}
+  .word-row.active{
+    background:linear-gradient(90deg,#f5f9ff,transparent);
+  }
+  .check{
+    display:flex;align-items:flex-start;justify-content:center;padding-top:3px
+  }
+  .check input{accent-color:var(--blue)}
+  .word-main{min-width:0}
+  .word-top{
+    display:flex;align-items:baseline;gap:10px;flex-wrap:wrap
+  }
+  .word{
+    font-size:19px;font-weight:750;color:#1e3049
+  }
+  .phonetic{font-size:12px;color:#9aa7b8}
+  .inline-audio{
+    display:inline-flex;gap:4px;align-items:center;
+  }
+  .inline-audio button{
+    width:26px;height:26px;
+    border:1px solid #dce7f6;
+    background:#fff;
+    color:#58708f;
+    border-radius:7px;
+    display:grid;place-items:center;
+    font-size:12px;
+    padding:0;
+  }
+  .inline-audio button:hover{
+    background:#edf4ff;color:var(--blue);border-color:#cbdcf7;
+  }
+  .meaning{
+    margin-top:4px;font-size:13px;color:#52647c
+  }
+  .example{
+    margin-top:8px;
+    font-family:Georgia,"Times New Roman",serif;
+    color:#677990;font-size:12px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .source{
+    margin-top:8px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    color:#9aa7b8;font-size:11px
+  }
+  .source-tag{
+    background:#f3f6fa;border-radius:999px;padding:4px 7px
+  }
+  .row-side{
+    display:flex;flex-direction:column;align-items:flex-end;gap:9px;
+    min-width:86px
+  }
+  .status{
+    border-radius:999px;padding:5px 8px;font-size:11px
+  }
+  .status.new{background:#f2f5f9;color:#7d8da1}
+  .status.learning{background:#fff5de;color:#b07822}
+  .status.mastered{background:#eaf7ee;color:#3d8b59}
+  .star{
+    border:0;background:transparent;color:#f0a537;font-size:18px;padding:0 4px
+  }
+
+  .detail-empty{
+    height:100%;display:grid;place-items:center;
+    text-align:center;color:#9aa7b8;font-size:12px;line-height:1.7
+  }
+  .detail-word{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:10px
+  }
+  .detail-title{font-size:28px;font-weight:780}
+  .detail-star{
+    width:34px;height:34px;border:1px solid var(--line);
+    background:#fff;border-radius:9px;color:#f0a537;font-size:18px
+  }
+  .detail-phon{font-size:12px;color:#91a0b4;margin-top:4px}
+  .pronounce-row{display:flex;gap:8px;margin:14px 0}
+  .pronounce{
+    flex:1;border:1px solid #dce7f8;background:#fff;
+    padding:8px;border-radius:9px;color:#4b6484;font-size:12px
+  }
+  .detail-meaning{font-size:14px;font-weight:700;color:#2f425b;line-height:1.55}
+  .label{
+    margin:18px 0 8px;color:#3d516c;font-size:12px;font-weight:700
+  }
+  .box{
+    border:1px solid var(--line);background:#fff;border-radius:11px;
+    padding:11px 12px;color:#5d6f87;font-size:12px;line-height:1.55
+  }
+  .source-link{
+    color:var(--blue);cursor:pointer
+  }
+  .note{
+    width:100%;min-height:86px;resize:vertical;
+    border:1px solid var(--line);border-radius:11px;
+    padding:10px 11px;outline:0;color:#52647c;background:#fff;
+    font-size:12px;line-height:1.5
+  }
+  .note:focus{border-color:#b8cdf2}
+  .status-select{
+    width:100%;height:36px;border:1px solid var(--line);
+    border-radius:9px;background:#fff;color:#53667f;padding:0 9px;font-size:12px
+  }
+  .detail-actions{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px
+  }
+  .detail-actions button{
+    border-radius:10px;padding:9px 10px;font-size:12px
+  }
+  .primary{border:0;background:var(--blue);color:white}
+  .secondary{border:1px solid #dbe5f2;background:#fff;color:#52667f}
+  .danger{
+    width:100%;margin-top:8px;border:1px solid #f0d7d7;background:#fff;
+    color:#b15a5a;border-radius:10px;padding:9px;font-size:12px
+  }
+
+  .toast{
+    position:fixed;left:50%;bottom:32px;z-index:100;
+    transform:translateX(-50%) translateY(20px);
+    background:#153151;color:#fff;border-radius:10px;
+    padding:10px 14px;font-size:13px;opacity:0;pointer-events:none;
+    transition:.2s;box-shadow:0 10px 25px rgba(19,49,81,.18)
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:980px){
+    body{padding:0}
+    .app{width:100vw;height:100vh;border-radius:0;grid-template-columns:160px 1fr}
+    .titlebar{grid-template-columns:160px 1fr auto}
+    .main{grid-template-columns:1fr}
+    .detail{display:none}
+    .controls{grid-template-columns:1fr 120px}
+    .controls .select:last-child{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="titlebar">
+    <div class="brand"><div class="logo">P</div><span>LanDict</span></div>
+    <div class="title-quote">“The limits of my language mean the limits of my world.”</div>
+    <div class="window-controls">
+      <button class="wc" id="minBtn">—</button>
+      <button class="wc" id="maxBtn">□</button>
+      <button class="wc close" id="closeBtn">×</button>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <button class="nav"><span class="icon">⌂</span>首页</button>
+    <button class="nav"><span class="icon">▤</span>阅读</button>
+    <button class="nav active"><span class="icon">□</span>生词本</button>
+    <button class="nav"><span class="icon">◴</span>背单词</button>
+    <button class="nav"><span class="icon">✦</span>AI 学习</button>
+    <div class="sidebar-spacer"></div>
+    <div class="settings">
+      <button class="nav"><span class="icon">⚙</span>设置</button>
+    </div>
+  </aside>
+
+  <main class="main detail-collapsed" id="mainLayout">
+    <button class="detail-divider" id="detailDivider" title="收起详情">›</button>
+    <section class="library">
+      <div class="head">
+        <div>
+          <h1>生词本</h1>
+          <div class="count" id="countText">共 8 个单词</div>
+        </div>
+        <button class="review-btn" id="reviewBtn">开始复习</button>
+      </div>
+
+      <div class="controls">
+        <div class="search">
+          <span>⌕</span>
+          <input id="searchInput" placeholder="搜索生词" />
+        </div>
+        <select class="select" id="sourceFilter">
+          <option value="all">全部来源</option>
+          <option value="lookup">查词加入</option>
+          <option value="reading">阅读加入</option>
+        </select>
+        <select class="select" id="sortSelect">
+          <option value="recent">最近加入</option>
+          <option value="az">A → Z</option>
+        </select>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-status="all">全部</button>
+        <button class="tab" data-status="new">未复习</button>
+        <button class="tab" data-status="learning">学习中</button>
+        <button class="tab" data-status="mastered">已掌握</button>
+      </div>
+
+      <div class="batchbar" id="batchbar">
+        <span>已选择 <b id="selectedCount">0</b> 个单词</span>
+        <div class="batch-actions">
+          <button id="batchLearning">标记学习中</button>
+          <button id="batchMastered">标记已掌握</button>
+          <button id="batchDelete">删除</button>
+        </div>
+      </div>
+
+      <div class="word-list" id="wordList"></div>
+    </section>
+
+    <aside class="detail" id="detailPanel"></aside>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const words = [
+  {
+    id:1, word:"subsidy", phon:"/ˈsʌbsədi/", meaning:"n. 补贴；津贴；政府资助",
+    example:"Many governments are expanding subsidy programs for renewable energy projects.",
+    source:"Global Push for Clean Energy", sourceType:"reading", date:"今天", status:"learning", starred:true,
+    note:"在气候政策文章里遇到，常和 government / energy 连用。"
+  },
+  {
+    id:2, word:"resilient", phon:"/rɪˈzɪliənt/", meaning:"adj. 有韧性的；恢复力强的",
+    example:"Cities need to become more resilient in the face of climate risks.",
+    source:"Global Push for Clean Energy", sourceType:"reading", date:"今天", status:"new", starred:true,
+    note:""
+  },
+  {
+    id:3, word:"emission", phon:"/ɪˈmɪʃən/", meaning:"n. 排放；排放物；释放",
+    example:"Carbon emission levels remain too high in many regions.",
+    source:"Global Push for Clean Energy", sourceType:"reading", date:"昨天", status:"learning", starred:true,
+    note:""
+  },
+  {
+    id:4, word:"deteriorate", phon:"/dɪˈtɪəriəreɪt/", meaning:"v. 恶化；变坏",
+    example:"Air quality may deteriorate during prolonged heat waves.",
+    source:"主页查词", sourceType:"lookup", date:"昨天", status:"new", starred:true,
+    note:""
+  },
+  {
+    id:5, word:"sustainable", phon:"/səˈsteɪnəbəl/", meaning:"adj. 可持续的",
+    example:"The city is investing in sustainable transport systems.",
+    source:"主页查词", sourceType:"lookup", date:"昨天", status:"mastered", starred:true,
+    note:""
+  },
+  {
+    id:6, word:"vulnerable", phon:"/ˈvʌlnərəbəl/", meaning:"adj. 脆弱的；易受伤害的",
+    example:"Older adults may be especially vulnerable to extreme heat.",
+    source:"主页查词", sourceType:"lookup", date:"更早", status:"learning", starred:true,
+    note:"和 susceptible 区分一下。"
+  },
+  {
+    id:7, word:"adaptation", phon:"/ˌædæpˈteɪʃən/", meaning:"n. 适应；改编",
+    example:"Climate adaptation requires long-term planning and investment.",
+    source:"How Cities Are Adapting", sourceType:"reading", date:"更早", status:"mastered", starred:true,
+    note:""
+  },
+  {
+    id:8, word:"inequality", phon:"/ˌɪnɪˈkwɒləti/", meaning:"n. 不平等；不均衡",
+    example:"Climate change can deepen existing social inequality.",
+    source:"主页查词", sourceType:"lookup", date:"更早", status:"new", starred:true,
+    note:""
+  }
+];
+
+let currentId = null;
+let statusFilter = "all";
+let sourceFilter = "all";
+let searchText = "";
+let sortMode = "recent";
+const selected = new Set();
+
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+
+function showToast(text){
+  const t=$("#toast");
+  t.textContent=text;
+  t.classList.add("show");
+  clearTimeout(window.__toast);
+  window.__toast=setTimeout(()=>t.classList.remove("show"),1600);
+}
+
+function filteredWords(){
+  let arr = words.filter(w=>{
+    const statusOk = statusFilter==="all" || w.status===statusFilter;
+    const sourceOk = sourceFilter==="all" || w.sourceType===sourceFilter;
+    const textOk = !searchText || (w.word+" "+w.meaning+" "+w.source).toLowerCase().includes(searchText.toLowerCase());
+    return statusOk && sourceOk && textOk;
+  });
+  if(sortMode==="az") arr=[...arr].sort((a,b)=>a.word.localeCompare(b.word));
+  return arr;
+}
+
+function statusText(status){
+  return status==="new"?"未复习":status==="learning"?"学习中":"已掌握";
+}
+
+function renderList(){
+  const list=$("#wordList");
+  const arr=filteredWords();
+  $("#countText").textContent=`共 ${arr.length} 个单词`;
+  list.innerHTML=arr.map(w=>`
+    <div class="word-row ${w.id===currentId?"active":""}" data-id="${w.id}">
+      <div class="check">
+        <input type="checkbox" ${selected.has(w.id)?"checked":""} aria-label="选择 ${w.word}">
+      </div>
+      <div class="word-main">
+        <div class="word-top">
+          <span class="word">${w.word}</span>
+          <span class="phonetic">英 ${w.britishPhonetic || w.phon} · 美 ${w.americanPhonetic || w.phon}</span>
+          <span class="inline-audio">
+            <button class="row-uk" title="英式发音">🇬🇧</button>
+            <button class="row-us" title="美式发音">🇺🇸</button>
+          </span>
+        </div>
+        <div class="meaning">${w.meaning}</div>
+        <div class="example">${w.example}</div>
+        <div class="source">
+          <span class="source-tag">${w.sourceType==="reading"?"阅读加入":"查词加入"}</span>
+          <span>${w.source}</span>
+          <span>·</span>
+          <span>${w.date}</span>
+        </div>
+      </div>
+      <div class="row-side">
+        <button class="star" title="收藏">★</button>
+        <span class="status ${w.status}">${statusText(w.status)}</span>
+      </div>
+    </div>
+  `).join("");
+
+  $$(".word-row").forEach(row=>{
+    row.addEventListener("click",e=>{
+      if(
+        e.target.type==="checkbox" ||
+        e.target.classList.contains("star") ||
+        e.target.classList.contains("row-uk") ||
+        e.target.classList.contains("row-us")
+      ) return;
+
+      currentId=Number(row.dataset.id);
+
+      // 点击单词时：如果详情栏处于收起状态，则自动展开。
+      const main=$("#mainLayout");
+      if(main.classList.contains("detail-collapsed")){
+        main.classList.remove("detail-collapsed");
+        $("#detailDivider").textContent="›";
+        $("#detailDivider").title="收起详情";
+      }
+
+      renderList();
+      renderDetail();
+    });
+    row.querySelector("input").addEventListener("change",e=>{
+      const id=Number(row.dataset.id);
+      e.target.checked?selected.add(id):selected.delete(id);
+      renderBatch();
+    });
+    row.querySelector(".star").addEventListener("click",e=>{
+      e.stopPropagation();
+      showToast("生词本中的单词默认已收藏");
+    });
+    row.querySelector(".row-uk").addEventListener("click",e=>{
+      e.stopPropagation();
+      const w=words.find(x=>x.id===Number(row.dataset.id));
+      speak(w.word,"en-GB");
+    });
+    row.querySelector(".row-us").addEventListener("click",e=>{
+      e.stopPropagation();
+      const w=words.find(x=>x.id===Number(row.dataset.id));
+      speak(w.word,"en-US");
+    });
+  });
+}
+
+function renderDetail(){
+  const panel=$("#detailPanel");
+  const w=words.find(x=>x.id===currentId);
+  if(!w){
+    panel.innerHTML=`<div class="detail-empty">选择左侧单词<br>查看详细信息</div>`;
+    return;
+  }
+  panel.innerHTML=`
+    <div class="detail-word">
+      <div>
+        <div class="detail-title">${w.word}</div>
+        <div class="detail-phon">英 ${w.britishPhonetic || w.phon} · 美 ${w.americanPhonetic || w.phon}</div>
+      </div>
+      <button class="detail-star">★</button>
+    </div>
+
+    <div class="pronounce-row">
+      <button class="pronounce" id="ukBtn">🇬🇧 英式发音</button>
+      <button class="pronounce" id="usBtn">🇺🇸 美式发音</button>
+    </div>
+
+    <div class="detail-meaning">${w.meaning}</div>
+
+    <div class="label">原文例句</div>
+    <div class="box">${w.example}</div>
+
+    <div class="label">来源</div>
+    <div class="box">
+      <span class="source-link">${w.source}</span><br>
+      <span style="color:#9aa7b8">${w.sourceType==="reading"?"来自阅读器":"来自主页查词"} · ${w.date}</span>
+    </div>
+
+    <div class="label">熟悉度</div>
+    <select class="status-select" id="detailStatus">
+      <option value="new" ${w.status==="new"?"selected":""}>未复习</option>
+      <option value="learning" ${w.status==="learning"?"selected":""}>学习中</option>
+      <option value="mastered" ${w.status==="mastered"?"selected":""}>已掌握</option>
+    </select>
+
+    <div class="label">我的笔记</div>
+    <textarea class="note" id="noteBox" placeholder="记录这个单词的联想、用法或易错点……">${w.note}</textarea>
+
+    <div class="detail-actions">
+      <button class="secondary" id="fullDefBtn">查看完整释义</button>
+      <button class="primary" id="reviewOneBtn">开始复习</button>
+    </div>
+    <button class="danger" id="removeBtn">移出生词本</button>
+  `;
+
+  $("#detailStatus").addEventListener("change",e=>{
+    w.status=e.target.value;
+    renderList();
+    showToast("熟悉度已更新");
+  });
+  $("#noteBox").addEventListener("input",e=>{ w.note=e.target.value; });
+  $("#ukBtn").addEventListener("click",()=>speak(w.word,"en-GB"));
+  $("#usBtn").addEventListener("click",()=>speak(w.word,"en-US"));
+  $("#fullDefBtn").addEventListener("click",()=>showToast(`打开 ${w.word} 的完整词典页（原型）`));
+  $("#reviewOneBtn").addEventListener("click",()=>showToast(`开始复习：${w.word}`));
+  $("#removeBtn").addEventListener("click",()=>{
+    const idx=words.findIndex(x=>x.id===w.id);
+    words.splice(idx,1);
+    selected.delete(w.id);
+    currentId=null;
+    renderList(); renderDetail(); renderBatch();
+    showToast("已移出生词本");
+  });
+}
+
+function renderBatch(){
+  $("#batchbar").classList.toggle("show",selected.size>0);
+  $("#selectedCount").textContent=selected.size;
+}
+
+function speak(text,lang){
+  if(!("speechSynthesis" in window)){showToast("当前浏览器不支持系统朗读");return;}
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang;u.rate=.92;
+  speechSynthesis.speak(u);
+}
+
+$$(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+  $$(".tab").forEach(t=>t.classList.remove("active"));
+  tab.classList.add("active");
+  statusFilter=tab.dataset.status;
+  renderList();
+}));
+
+$("#sourceFilter").addEventListener("change",e=>{sourceFilter=e.target.value;renderList();});
+$("#sortSelect").addEventListener("change",e=>{sortMode=e.target.value;renderList();});
+$("#searchInput").addEventListener("input",e=>{searchText=e.target.value.trim();renderList();});
+
+$("#reviewBtn").addEventListener("click",()=>showToast("进入背单词复习模式（原型）"));
+
+$("#detailDivider").addEventListener("click",()=>{
+  const main=$("#mainLayout");
+  const collapsed=main.classList.toggle("detail-collapsed");
+  $("#detailDivider").textContent=collapsed?"‹":"›";
+  $("#detailDivider").title=collapsed?"双击单词可展开详情":"收起详情";
+  showToast(collapsed?"已收起单词详情":"已展开单词详情");
+});
+
+$("#batchLearning").addEventListener("click",()=>{
+  words.forEach(w=>{if(selected.has(w.id))w.status="learning";});
+  selected.clear(); renderList(); renderDetail(); renderBatch(); showToast("已标记为学习中");
+});
+$("#batchMastered").addEventListener("click",()=>{
+  words.forEach(w=>{if(selected.has(w.id))w.status="mastered";});
+  selected.clear(); renderList(); renderDetail(); renderBatch(); showToast("已标记为已掌握");
+});
+$("#batchDelete").addEventListener("click",()=>{
+  for(let i=words.length-1;i>=0;i--){if(selected.has(words[i].id))words.splice(i,1);}
+  selected.clear();
+  if(!words.some(w=>w.id===currentId)) currentId=null;
+  renderList(); renderDetail(); renderBatch(); showToast("已删除所选单词");
+});
+
+$$(".nav").forEach(btn=>btn.addEventListener("click",()=>{
+  $$(".nav").forEach(n=>n.classList.remove("active"));
+  btn.classList.add("active");
+  showToast(`${btn.textContent.trim()}：原型页面`);
+}));
+
+$("#minBtn").addEventListener("click",()=>showToast("Windows 最小化按钮（原型）"));
+$("#maxBtn").addEventListener("click",()=>showToast("Windows 最大化按钮（原型）"));
+$("#closeBtn").addEventListener("click",()=>showToast("Windows 关闭按钮（原型）"));
+
+renderList();
+renderDetail();
+renderBatch();
+</script>
+</body>
+</html>

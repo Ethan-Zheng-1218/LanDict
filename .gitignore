@@ -1,0 +1,26 @@
+.superpowers/
+.firecrawl/
+node_modules/
+dist/
+src-tauri/target/
+src-tauri/gen/schemas/
+coverage/
+.vite/
+test-results/
+playwright-report/
+*.log
+.env
+.env.*
+!.env.example
+Thumbs.db
+Desktop.ini
+.merge-backup-*/
+.git-source-history/
+*.mdx
+*.mdd
+data/ecdict-sqlite-28/stardict.db
+data/ecdict-sqlite-28/stardict-slim.db
+data/oxford-sqlite/
+data/cedict-sqlite/
+# 本地模型跑词组库时的进度文件（判分/例句逐条追加），产物才是要提交的东西
+data/phrase-ai/

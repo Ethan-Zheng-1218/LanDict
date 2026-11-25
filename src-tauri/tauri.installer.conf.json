@@ -1,0 +1,18 @@
+{
+  "bundle": {
+    "targets": ["nsis"],
+    "licenseFile": "windows/agreement.txt",
+    "windows": {
+      "nsis": {
+        "template": "windows/installer.nsi",
+        "installerIcon": "target/installer-preview/assets/installer.ico",
+        "uninstallerIcon": "target/installer-preview/assets/installer.ico",
+        "installMode": "currentUser",
+        "languages": ["SimpChinese", "English"],
+        "displayLanguageSelector": false,
+        "compression": "lzma",
+        "startMenuFolder": "LanDict"
+      }
+    }
+  }
+}

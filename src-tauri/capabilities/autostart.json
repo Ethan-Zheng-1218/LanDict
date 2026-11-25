@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "autostart-settings",
+  "description": "Allow the main settings window to read and change LanDict startup",
+  "windows": ["main"],
+  "platforms": ["windows"],
+  "permissions": ["autostart:allow-is-enabled", "autostart:allow-enable", "autostart:allow-disable"]
+}

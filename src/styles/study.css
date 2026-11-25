@@ -1,0 +1,1179 @@
+/* 背单词页。样式照 design-previews/word-study-preview.html 搬过来：
+   外壳（侧栏、顶栏、页边距、内容列）由 globals.css 提供，这里只写页面自己的部分。
+   类名统一加 study- 前缀，避免和应用里其他页面的同名类互相影响。
+   颜色、字号、圆角全部走 tokens.css 的变量，三套主题（blue / lime / black）自动跟随。 */
+
+.study-page {
+  display: flex;
+  width: min(var(--page-width), 100%);
+  min-height: 100%;
+  margin: 0 auto;
+  flex-direction: column;
+  color: var(--text-primary);
+}
+
+.study-screen {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
+}
+
+/* 页面内的内联图标：几何与描边照预览，尺寸由各自的位置决定 */
+.study-page svg {
+  display: block;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.study-icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.study-mode-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.study-phonetic-button svg {
+  width: 16px;
+  height: 16px;
+  color: var(--blue-primary);
+}
+
+.study-summary-icon svg {
+  width: 27px;
+  height: 27px;
+}
+
+/* ── 分区：左边分区标题，右边一句 meta（和阅读页同一套语言） ── */
+
+.study-section {
+  margin-top: var(--spacing-xl);
+}
+
+.study-section:first-child {
+  margin-top: 0;
+}
+
+.study-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.study-section-head h2 {
+  margin: 0;
+  font-size: var(--type-card-title);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-section-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+}
+
+.study-section-meta strong {
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-mini-bar {
+  width: 120px;
+  height: 5px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  background: var(--bg-soft);
+}
+
+.study-mini-bar i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--blue-primary);
+}
+
+/* ── 学习内容：三行来源，单选 ── */
+
+.study-source-row {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.study-source-row:first-of-type {
+  border-top: 1px solid var(--border-soft);
+}
+
+.study-source-row-grid {
+  align-items: flex-start;
+}
+
+.study-source-label {
+  flex: 0 0 76px;
+  color: var(--text-secondary);
+  font-size: var(--type-body);
+  font-weight: var(--font-weight-medium);
+}
+
+.study-chips {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.study-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.study-chip-grid .study-chip {
+  width: 100%;
+  justify-content: center;
+}
+
+.study-source-side {
+  flex-shrink: 0;
+}
+
+.study-chip {
+  position: relative;
+  display: inline-flex;
+  height: 34px;
+  overflow: hidden;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: border-color .17s, color .17s;
+}
+
+.study-chip:hover {
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.study-chip[aria-pressed="true"] {
+  border-color: var(--blue-primary);
+  background: var(--bg-active);
+  color: var(--blue-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-chip-count {
+  margin-left: 8px;
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.study-chip[aria-pressed="true"] .study-chip-count {
+  color: var(--blue-primary);
+}
+
+.study-chip-body {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 词库进度：按钮底部 3px 细条，绿色填到哪算哪，没开始的只有一条空轨道 */
+.study-chip-track {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--border-soft);
+}
+
+.study-chip-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--status-mastered);
+  transition: width .25s ease;
+}
+
+/* 只要开始了就至少要看得见（3849 词的书只背了 3% 时，3px 太细） */
+.study-chip[data-progress="true"] .study-chip-fill {
+  min-width: 5px;
+}
+
+.study-chip-link {
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--blue-primary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.study-chip-link:hover {
+  background: var(--bg-active);
+}
+
+.study-notice {
+  margin: var(--spacing-md) 0 0;
+  color: var(--status-learning);
+  font-size: var(--type-secondary);
+}
+
+/* ── 两张模式卡 ── */
+
+.study-modes {
+  display: grid;
+  flex: 1;
+  min-height: 228px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.study-mode-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  min-height: 228px;
+  padding: 18px 22px 0;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+  transition: .18s;
+}
+
+.study-mode-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-hover);
+}
+
+.study-mode-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  margin-bottom: 10px;
+  border-radius: 12px;
+}
+
+.study-mode-icon.new {
+  background: var(--bg-active);
+  color: var(--blue-primary);
+}
+
+.study-mode-icon.review {
+  background: var(--status-mastered-surface);
+  color: var(--status-mastered);
+}
+
+/* 背新单词那张卡的图标是字母 W（Word），不是图标字体 */
+.study-mode-icon-letter {
+  font-size: 22px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+
+.study-mode-card h3 {
+  margin: 0;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-mode-num {
+  margin: 14px 0 0;
+  font-size: 32px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -.025em;
+  line-height: 1.1;
+}
+
+.study-mode-num span {
+  margin-left: 6px;
+  color: var(--text-muted);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+}
+
+.study-mode-foot {
+  margin: 7px 0 0;
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  line-height: 1.6;
+}
+
+/* 卡片底部那一条：左边设置或说明，右边动作 */
+.study-mode-strip {
+  display: flex;
+  width: calc(100% + 44px);
+  min-height: 50px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin: auto -22px 0;
+  padding: 0 16px;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0 0 var(--radius-card) var(--radius-card);
+  background: var(--bg-soft);
+}
+
+.study-strip-label {
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+}
+
+.study-seg {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+}
+
+.study-seg button {
+  min-width: 34px;
+  height: 28px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.study-seg button:hover {
+  background: var(--bg-soft);
+}
+
+.study-seg button[aria-pressed="true"] {
+  background: var(--bg-active);
+  color: var(--blue-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  background: transparent;
+  color: var(--blue-primary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.study-card-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.study-empty-action {
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  white-space: nowrap;
+}
+
+.study-today-line {
+  margin-top: var(--spacing-lg);
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  text-align: center;
+}
+
+.study-start-button {
+  display: inline-flex;
+  height: 42px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--primary-gradient);
+  box-shadow: 0 3px 10px var(--interactive-focus);
+  color: var(--interactive-on-primary);
+  font-size: var(--type-body);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: .17s;
+}
+
+.study-start-button:hover {
+  background: var(--blue-hover);
+}
+
+.study-start-button.secondary {
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  box-shadow: none;
+  color: var(--text-secondary);
+}
+
+.study-start-button.secondary:hover {
+  border-color: var(--blue-primary);
+  background: var(--bg-soft);
+  color: var(--text-primary);
+}
+
+.study-mode-strip .study-start-button {
+  height: 36px;
+  padding: 0 16px;
+}
+
+/* ── 学习会话：内容整体居中，底部按钮固定不动 ── */
+
+.study-session-head {
+  display: flex;
+  min-height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 14px;
+}
+
+.study-icon-button {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.study-icon-button:hover {
+  background: var(--bg-soft);
+  color: var(--text-primary);
+}
+
+.study-session-back {
+  display: inline-flex;
+  height: 36px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  cursor: pointer;
+}
+
+.study-session-back:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.study-session-back svg {
+  width: 16px;
+  height: 16px;
+}
+
+.study-step {
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.study-progress {
+  flex: 1;
+  min-width: 80px;
+  height: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  background: var(--bg-soft);
+}
+
+.study-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--blue-primary);
+  transition: width .25s ease;
+}
+
+.study-book {
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  white-space: nowrap;
+}
+
+.study-body {
+  display: flex;
+  flex: 1;
+  min-height: 250px;
+  flex-direction: column;
+  overflow: auto;
+  padding: 10px 0;
+}
+
+/* 用 margin:auto 居中而不是 justify-content:center：窗口很矮、内容溢出时前者不会把顶部裁掉 */
+.study-group {
+  display: flex;
+  width: 100%;
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+}
+
+.study-word-zone {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.study-word {
+  margin: 0;
+  font-size: var(--type-word-title);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -.025em;
+  line-height: 1.22;
+  text-align: center;
+  word-break: break-word;
+}
+
+.study-word.phrase {
+  font-size: var(--type-page-title);
+}
+
+.study-phonetics {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 22px;
+  margin-top: 12px;
+}
+
+.study-phonetic-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.study-phonetic-button:hover {
+  background: var(--bg-soft);
+  color: var(--blue-primary);
+}
+
+.study-phonetic-button b {
+  margin-right: 2px;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.study-meaning-zone {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .36s cubic-bezier(.4, 0, .2, 1), opacity .24s ease .1s;
+}
+
+.study-body.revealed .study-meaning-zone {
+  max-height: 44vh;
+  opacity: 1;
+}
+
+.study-answer-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 22px 0 14px;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  text-align: center;
+}
+
+.study-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: var(--type-muted);
+  font-weight: var(--font-weight-medium);
+}
+
+.study-tag.known { background: var(--status-mastered-surface); color: var(--status-mastered); }
+.study-tag.unsure { background: var(--status-learning-surface); color: var(--status-learning); }
+.study-tag.unknown { background: var(--status-pending-surface); color: var(--status-pending); }
+.study-tag.saved { background: var(--bg-active); color: var(--blue-primary); }
+.study-tag.removed { background: var(--bg-soft); color: var(--text-muted); }
+
+.study-meaning-card {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(190px, 34fr) minmax(0, 66fr);
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+}
+
+.study-meaning-card.single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.study-meaning-left {
+  min-width: 0;
+  padding: 20px 22px;
+  border-right: 1px solid var(--border-soft);
+}
+
+.study-meaning-card.single .study-meaning-left {
+  border-right: 0;
+}
+
+.study-meaning-right {
+  min-width: 0;
+  padding: 20px 22px;
+}
+
+.study-meaning-text {
+  margin: 4px 0 0;
+}
+
+/* 一个词性一行：行首固定宽度的一列放词性，右边把前 4 条义项串成一句。 */
+.study-meaning-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.study-meaning-row + .study-meaning-row {
+  margin-top: 10px;
+}
+
+.study-meaning-pos {
+  flex: 0 0 auto;
+  min-width: 3.4em;
+  color: var(--text-muted);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.7;
+}
+
+.study-meaning-line {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--type-body);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+/* 释义多的时候卡片自己滚，底部按钮依然不动。 */
+.study-body.revealed .study-meaning-card {
+  max-height: calc(44vh - 3.9rem);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+.study-sect-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: var(--type-muted);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-sect-label i {
+  display: block;
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--blue-primary);
+}
+
+.study-sect + .study-sect {
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.study-example-en {
+  margin: 0;
+  font-size: var(--type-body);
+  line-height: 1.8;
+}
+
+.study-example-cn {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  line-height: 1.7;
+}
+
+.study-example + .study-example {
+  margin-top: 15px;
+}
+
+.study-collocation-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.study-collocation-chips span {
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+}
+
+.study-collocation-chips em {
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  font-style: normal;
+}
+
+.study-actions {
+  flex-shrink: 0;
+  padding-top: 6px;
+}
+
+.study-quiet-row {
+  display: flex;
+  justify-content: center;
+}
+
+/* 和下面三个键同一种按钮形式，只是位置仍在上面（对应 ↑ 的方向） */
+.study-quiet-button {
+  display: inline-flex;
+  width: 148px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-control);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .17s, color .17s, border-color .17s;
+}
+
+.study-quiet-button:hover {
+  border-color: var(--blue-primary);
+  background: var(--bg-soft);
+  color: var(--blue-primary);
+}
+
+.study-grade-row {
+  width: min(460px, 100%);
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px auto 0;
+}
+
+.study-grade-button {
+  display: inline-flex;
+  height: 36px;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: var(--type-secondary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background .17s, color .17s, border-color .17s;
+}
+
+.study-grade-button.primary {
+  background: var(--primary-gradient);
+  box-shadow: 0 4px 12px var(--interactive-focus);
+  color: var(--interactive-on-primary);
+}
+
+.study-grade-button.primary:hover {
+  background: var(--blue-hover);
+}
+
+.study-grade-button.secondary {
+  border-color: var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.study-grade-button.secondary:hover {
+  border-color: var(--blue-primary);
+  background: var(--bg-soft);
+  color: var(--blue-primary);
+}
+
+.study-grade-button.warn:hover {
+  border-color: var(--status-pending);
+  background: var(--status-pending-surface);
+  color: var(--status-pending);
+}
+
+.study-page kbd {
+  padding: 3px 5px;
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  background: var(--bg-soft);
+  box-shadow: 0 1px 0 var(--border-soft);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+}
+
+.study-quiet-button kbd,
+.study-grade-button kbd {
+  display: inline-grid;
+  min-width: 20px;
+  height: 20px;
+  place-items: center;
+  padding: 0 4px;
+  font-size: var(--font-size-xs);
+}
+
+.study-hint-line {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+}
+
+.study-hint-line span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── 小结 ── */
+
+.study-center-stage {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px 0;
+}
+
+.study-summary {
+  width: min(560px, 100%);
+  margin: auto;
+  padding: 32px 34px 26px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  text-align: center;
+}
+
+.study-summary-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  margin: 0 auto 15px;
+  border-radius: 17px;
+  background: var(--status-mastered-surface);
+  color: var(--status-mastered);
+}
+
+.study-summary h2 {
+  margin: 0;
+  font-size: var(--type-page-title-compact);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -.025em;
+}
+
+.study-summary-lead {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  line-height: 1.8;
+}
+
+.study-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin: 22px 0 0;
+}
+
+.study-stat {
+  padding: 12px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--bg-soft);
+}
+
+.study-stat b {
+  display: block;
+  font-size: var(--type-card-title);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-stat span {
+  display: block;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  font-weight: var(--font-weight-regular);
+}
+
+.study-stat.known b { color: var(--status-mastered); }
+.study-stat.unsure b { color: var(--status-learning); }
+.study-stat.unknown b { color: var(--status-pending); }
+.study-stat.saved b { color: var(--blue-primary); }
+.study-stat.removed b { color: var(--text-muted); }
+
+.study-next-box {
+  margin-top: 18px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  line-height: 1.9;
+  text-align: left;
+}
+
+.study-next-box strong {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-summary-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 11px;
+  margin-top: 20px;
+}
+
+/* ── 复习节奏抽屉 ── */
+
+.study-drawer-backdrop {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  justify-content: flex-end;
+  background: rgb(8 20 34 / 34%);
+}
+
+.study-drawer {
+  width: min(420px, 100%);
+  height: 100%;
+  overflow: auto;
+  padding: 24px 26px 28px;
+  border-left: 1px solid var(--border-soft);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-hover);
+  animation: study-slide-in .2s ease-out;
+}
+
+.study-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.study-drawer-head h2 {
+  margin: 0;
+  font-size: var(--type-card-title);
+  font-weight: var(--font-weight-bold);
+}
+
+.study-drawer-head p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  line-height: 1.7;
+}
+
+.study-ladder {
+  margin-top: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+}
+
+.study-ladder-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 15px;
+  border-top: 1px solid var(--border-soft);
+  font-size: var(--type-secondary);
+}
+
+.study-ladder-row:first-child {
+  border-top: 0;
+}
+
+.study-ladder-row b {
+  width: 44px;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.study-ladder-row span {
+  color: var(--text-primary);
+}
+
+.study-ladder-row em {
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: var(--type-muted);
+  font-style: normal;
+}
+
+.study-rule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.study-rule-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  line-height: 1.75;
+}
+
+.study-rule-list .study-tag {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.study-reason {
+  margin-top: 20px;
+  padding: 13px 15px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-control);
+  background: var(--bg-soft);
+  color: var(--text-secondary);
+  font-size: var(--type-secondary);
+  line-height: 1.8;
+}
+
+@keyframes study-slide-in {
+  from { transform: translateX(14px); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (max-width: 940px) {
+  .study-modes {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .study-mode-card {
+    min-height: 228px;
+  }
+
+  .study-meaning-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .study-meaning-left {
+    border-right: 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+
+  .study-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .study-source-row {
+    flex-wrap: wrap;
+  }
+
+  .study-chip-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .study-page *,
+  .study-page *::before,
+  .study-page *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,323 @@
+{
+  "source_file": "doubao-reference.mp4",
+  "source_sha256": "0578733137522661fa5d3655c36bd7062202a95e9ca1deb5c351744052f2df3d",
+  "source_size": [
+    720,
+    720
+  ],
+  "source_fps": [
+    24,
+    1
+  ],
+  "source_decoded_frames": 241,
+  "source_frame_indices": [
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37
+  ],
+  "source_timestamps_seconds": [
+    0.5833333333333334,
+    0.625,
+    0.6666666666666666,
+    0.7083333333333334,
+    0.75,
+    0.7916666666666666,
+    0.8333333333333334,
+    0.875,
+    0.9166666666666666,
+    0.9583333333333334,
+    1.0,
+    1.0416666666666667,
+    1.0833333333333333,
+    1.125,
+    1.1666666666666667,
+    1.2083333333333333,
+    1.25,
+    1.2916666666666667,
+    1.3333333333333333,
+    1.375,
+    1.4166666666666667,
+    1.4583333333333333,
+    1.5,
+    1.5416666666666667
+  ],
+  "crop_xyxy": [
+    120,
+    120,
+    650,
+    595
+  ],
+  "frame_size": [
+    530,
+    475
+  ],
+  "frame_count": 24,
+  "frame_duration_ms_rational": [
+    1000,
+    24
+  ],
+  "cycle_duration_ms": 1000,
+  "frame_files": [
+    "frames/frame-00.png",
+    "frames/frame-01.png",
+    "frames/frame-02.png",
+    "frames/frame-03.png",
+    "frames/frame-04.png",
+    "frames/frame-05.png",
+    "frames/frame-06.png",
+    "frames/frame-07.png",
+    "frames/frame-08.png",
+    "frames/frame-09.png",
+    "frames/frame-10.png",
+    "frames/frame-11.png",
+    "frames/frame-12.png",
+    "frames/frame-13.png",
+    "frames/frame-14.png",
+    "frames/frame-15.png",
+    "frames/frame-16.png",
+    "frames/frame-17.png",
+    "frames/frame-18.png",
+    "frames/frame-19.png",
+    "frames/frame-20.png",
+    "frames/frame-21.png",
+    "frames/frame-22.png",
+    "frames/frame-23.png"
+  ],
+  "sprite_grid": [
+    6,
+    4
+  ],
+  "gif_frame_durations_ms": [
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40,
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40,
+    40,
+    50,
+    40,
+    40,
+    40
+  ],
+  "matte": "Closed brown crayon silhouette, exterior flood fill, 0.6 px alpha antialias; original RGB retained.",
+  "registration": "Single fixed crop for every source frame; no per-frame centering, body transforms or added bobbing.",
+  "opaque_pixel_counts": [
+    142146,
+    141996,
+    141882,
+    141644,
+    141100,
+    140845,
+    140229,
+    139496,
+    140826,
+    141524,
+    141377,
+    141010,
+    141088,
+    141230,
+    141364,
+    141305,
+    140512,
+    139850,
+    139193,
+    140257,
+    142384,
+    142720,
+    142671,
+    142630
+  ],
+  "alpha_bounds": [
+    [
+      13,
+      24,
+      516,
+      448
+    ],
+    [
+      12,
+      26,
+      516,
+      448
+    ],
+    [
+      13,
+      28,
+      516,
+      448
+    ],
+    [
+      14,
+      34,
+      517,
+      446
+    ],
+    [
+      14,
+      38,
+      517,
+      446
+    ],
+    [
+      14,
+      38,
+      518,
+      446
+    ],
+    [
+      13,
+      38,
+      519,
+      446
+    ],
+    [
+      13,
+      34,
+      519,
+      446
+    ],
+    [
+      13,
+      28,
+      518,
+      446
+    ],
+    [
+      13,
+      26,
+      518,
+      446
+    ],
+    [
+      14,
+      24,
+      518,
+      446
+    ],
+    [
+      14,
+      24,
+      516,
+      444
+    ],
+    [
+      13,
+      24,
+      516,
+      444
+    ],
+    [
+      13,
+      26,
+      516,
+      444
+    ],
+    [
+      13,
+      28,
+      517,
+      444
+    ],
+    [
+      13,
+      34,
+      517,
+      442
+    ],
+    [
+      13,
+      37,
+      518,
+      450
+    ],
+    [
+      13,
+      36,
+      520,
+      452
+    ],
+    [
+      12,
+      36,
+      520,
+      452
+    ],
+    [
+      13,
+      32,
+      519,
+      452
+    ],
+    [
+      13,
+      26,
+      517,
+      452
+    ],
+    [
+      13,
+      24,
+      516,
+      452
+    ],
+    [
+      13,
+      24,
+      516,
+      452
+    ],
+    [
+      13,
+      24,
+      516,
+      450
+    ]
+  ],
+  "verification": {
+    "source_rgb_unchanged": true,
+    "png_count": 24,
+    "gif_frames": 24,
+    "gif_duration_ms": 1000,
+    "slow_duration_ms": 3000,
+    "sprite_tiles_rgba_unchanged": true,
+    "join_mean_rgb_difference": 2.8629276752471924,
+    "internal_mean_rgb_difference": 5.141759136448735,
+    "internal_max_rgb_difference": 8.923441886901855
+  },
+  "visual_status": "Candidate for user review; no final installer acceptance implied."
+}

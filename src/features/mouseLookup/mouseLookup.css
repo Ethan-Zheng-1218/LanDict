@@ -1,0 +1,31 @@
+html[data-window="mouse-lookup"], html[data-window="mouse-lookup"] body { background: transparent; }
+html[data-window="mouse-lookup"] #root { display: block; padding: 6px; min-height: 100vh; }
+.hover-lookup-card { height: calc(100vh - 12px); gap: 10px; border: 1px solid var(--border-default); border-radius: 14px; padding: 12px; overflow: hidden; box-shadow: 0 3px 12px rgb(22 42 65 / 12%); }
+.hover-lookup-card [data-slot="card-header"], .hover-lookup-card [data-slot="card-content"] { padding: 0; }
+.hover-lookup-card [data-slot="card-header"] { position: relative; flex-shrink: 0; gap: 4px; }
+.hover-lookup-heading { display: flex; align-items: center; gap: 5px; }
+.hover-lookup-heading [data-slot="card-title"] { min-width: 0; }
+.hover-lookup-card h1, .hover-lookup-word-measure { margin: 0; font-size: 25px; line-height: 1.25; font-weight: 700; color: var(--text-primary); }
+.hover-lookup-card h1 { overflow-wrap: anywhere; }
+.hover-lookup-word-measure { position: absolute; visibility: hidden; white-space: pre; width: max-content; pointer-events: none; }
+.hover-lookup-card .hover-lookup-phonetic { display: inline-flex; align-items: center; gap: 5px; width: fit-content; margin: 7px 0 0; padding: 0; border: 0; color: var(--text-secondary); background: transparent; font-size: 11px; line-height: 1.6; cursor: pointer; }
+.hover-lookup-card .hover-lookup-phonetic:hover { color: var(--blue-primary); }
+.hover-lookup-card .hover-lookup-collect, .hover-lookup-card .hover-lookup-close { padding: 0; flex-shrink: 0; height: 27px; width: 27px; border-radius: 7px; }
+.hover-lookup-card .hover-lookup-collect { color: var(--text-secondary); }
+.hover-lookup-card .hover-lookup-collect[aria-pressed="true"] { color: var(--blue-primary); }
+.hover-lookup-card .hover-lookup-close { margin-left: auto; }
+.hover-lookup-card .hover-lookup-collect svg, .hover-lookup-card .hover-lookup-close svg { width: 20px; height: 20px; }
+.hover-lookup-card .hover-lookup-collect svg { stroke-width: 1.45; stroke-linejoin: round; }
+.hover-lookup-card .hover-lookup-phonetic svg { width: 14px; height: 14px; }
+.hover-lookup-card [data-slot="card-content"] { min-height: 0; overflow: auto; scrollbar-width: thin; }
+.hover-lookup-card section + section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-soft); }
+.hover-lookup-card h2 { margin: 0 0 4px; font-size: 11px; color: var(--text-secondary); font-weight: 500; }
+.hover-lookup-card .hover-lookup-ai-toggle { display: block; margin: 0 0 4px; padding: 0; border: 0; color: inherit; background: transparent; cursor: pointer; }
+.hover-lookup-card .hover-lookup-ai-toggle h2 { margin: 0; }
+.hover-lookup-card p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--text-primary); white-space: pre-line; overflow-wrap: anywhere; user-select: text; }
+.hover-lookup-card [data-slot="card-footer"] { padding: 7px 0 0; margin-top: auto; gap: 8px; align-items: center; flex-shrink: 0; border-top: 1px solid var(--border-soft); }
+.hover-lookup-card [data-slot="card-footer"] button { height: 26px; padding: 0 4px; gap: 5px; font-size: 11px; }
+.hover-lookup-copy-status { color: var(--text-secondary); font-size: 10px; }
+.mouse-lookup-delay { display: flex; align-items: center; gap: 8px; flex-shrink: 0; font-size: 13px; color: var(--text-secondary); }
+.mouse-lookup-delay input { width: 100px; height: 36px; }
+.mouse-lookup-error { position: fixed; bottom: 16px; right: 24px; padding: 8px 12px; border: 1px solid var(--border-soft); background: var(--bg-surface); color: var(--text-primary); border-radius: var(--radius-control); font-size: 13px; }

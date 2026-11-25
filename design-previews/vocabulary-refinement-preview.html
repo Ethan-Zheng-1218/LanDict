@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LanDict · 生词本紧凑版</title>
+  <link rel="stylesheet" href="study-refinement-preview.css">
+  <link rel="stylesheet" href="vocabulary-refinement-preview.css">
+</head>
+<body data-theme="blue">
+  <svg aria-hidden="true" width="0" height="0" style="position:absolute">
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5c2.8-.8 5.2-.3 8 1.4v12c-2.8-1.7-5.2-2.2-8-1.4z"/><path d="M20 5.5c-2.8-.8-5.2-.3-8 1.4v12c2.8-1.7 5.2-2.2 8-1.4z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m4 10 8-6 8 6v9H5z"/><path d="M9.5 19v-6h5v6"/></symbol>
+    <symbol id="i-translate" viewBox="0 0 24 24"><path d="M4 6h9M8.5 3v3M6 6c.7 3.2 2.8 5.7 6 7"/><path d="M11 8c-.9 2.2-2.8 4.2-6 5.5M14 20l3.5-9 3.5 9M15.2 17h4.6"/></symbol>
+    <symbol id="i-reading" viewBox="0 0 24 24"><path d="M4 5.5c2.8-.8 5.2-.3 8 1.4v12c-2.8-1.7-5.2-2.2-8-1.4z"/><path d="M20 5.5c-2.8-.8-5.2-.3-8 1.4v12c2.8-1.7 5.2-2.2 8-1.4z"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h4"/></symbol>
+    <symbol id="i-study" viewBox="0 0 24 24"><path d="m3 9 9-5 9 5-9 5z"/><path d="M7 12v4.5c2.7 2 7.3 2 10 0V12M21 9v6"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.7-.7-1.7.9-1.9-2.1-2.1-1.9.9-1.7-.7L10.5 2h-3l-.7 2-1.7.7-1.9-.9-2.1 2.1.9 1.9-.7 1.7-2 .7v3l2 .7.7 1.7-.9 1.9 2.1 2.1 1.9-.9 1.7.7.7 2h3l.7-2 1.7-.7 1.9.9 2.1-2.1-.9-1.9.7-1.7z" transform="translate(3 0) scale(.75)"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></symbol>
+    <symbol id="i-sort" viewBox="0 0 24 24"><path d="M8 4v16M5 17l3 3 3-3M15 6h5M15 12h4M15 18h3"/></symbol>
+    <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3v11M8 10l4 4 4-4"/><path d="M5 14v5h14v-5"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M3 3l18 18M10.5 5.2A11.2 11.2 0 0 1 12 5c5.8 0 9 7 9 7a16.7 16.7 0 0 1-2.5 3.3M6.2 6.2C4.1 7.7 3 12 3 12s3.2 7 9 7c1.3 0 2.5-.3 3.5-.7"/><path d="M9.8 9.8a3 3 0 0 0 4.4 4.4"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 10h4l5-4v12l-5-4H4z"/><path d="M16 9a4 4 0 0 1 0 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m7 7 10 10M17 7 7 17"/></symbol>
+    <symbol id="i-bookmark" viewBox="0 0 24 24"><path d="M7 4h10v16l-5-3-5 3z"/></symbol>
+  </svg>
+
+  <nav class="preview-toolbar" aria-label="预览页面切换">
+    <a href="study-home-refinement-preview.html">背单词</a>
+    <a href="vocabulary-refinement-preview.html" aria-current="page">生词本</a>
+    <span class="theme-switch" aria-label="切换主题">
+      <button class="theme-dot blue active" data-theme-value="blue" aria-label="蓝色主题"></button>
+      <button class="theme-dot lime" data-theme-value="lime" aria-label="绿色主题"></button>
+      <button class="theme-dot black" data-theme-value="black" aria-label="黑色主题"></button>
+    </span>
+  </nav>
+
+  <div class="preview-canvas">
+    <div class="app-shell">
+      <header class="brandbar"><span class="brand-mark"><svg class="icon"><use href="#i-book"/></svg></span><span class="brand-name">LanDict</span></header>
+      <div class="titlebar" aria-hidden="true"><div class="window-controls"><span>—</span><span>□</span><span>×</span></div></div>
+      <aside class="sidebar">
+        <nav class="nav-list" aria-label="主导航">
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-home"/></svg><span>首页</span></a>
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-translate"/></svg><span>翻译</span></a>
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-reading"/></svg><span>阅读</span></a>
+          <a class="nav-item active" href="#" aria-current="page"><svg class="icon"><use href="#i-file"/></svg><span>生词本</span></a>
+          <a class="nav-item" href="#"><svg class="icon"><use href="#i-study"/></svg><span>背单词</span></a>
+        </nav>
+        <div class="settings-link"><a class="nav-item" href="#"><svg class="icon"><use href="#i-settings"/></svg><span>设置</span></a></div>
+      </aside>
+
+      <main class="main">
+        <div class="vocab-content">
+          <header class="vocab-toolbar">
+            <div class="toolbar-left">
+              <label class="search-box"><svg class="icon"><use href="#i-search"/></svg><input placeholder="搜索生词或释义" /></label>
+              <button class="toolbar-button" type="button"><svg class="icon"><use href="#i-sort"/></svg>最近收藏 <span class="chevron">⌄</span></button>
+            </div>
+            <div class="toolbar-right">
+              <button class="toolbar-button" type="button"><svg class="icon"><use href="#i-import"/></svg>导入</button>
+              <button class="toolbar-button" type="button"><svg class="icon"><use href="#i-eye-off"/></svg>隐藏释义</button>
+              <button class="primary-button" type="button"><svg class="icon"><use href="#i-study"/></svg>开始背单词</button>
+            </div>
+          </header>
+
+          <div class="filter-row" aria-label="学习状态筛选">
+            <button class="filter-chip active" type="button">全部 <small>4</small></button>
+            <button class="filter-chip" type="button">待学习 <small>1</small></button>
+            <button class="filter-chip" type="button">学习中 <small>0</small></button>
+            <button class="filter-chip" type="button">已掌握 <small>3</small></button>
+          </div>
+
+          <section class="vocab-workspace">
+            <article class="word-list-panel">
+              <header class="panel-head"><strong>我的生词</strong><span>4 个词</span></header>
+              <div class="word-list">
+                <button class="word-item selected" type="button">
+                  <span class="word-copy"><span class="word-line"><b>virus</b><em class="status pending"><i></i>待学习</em></span><span class="word-meaning">病毒；滤过性病毒；毒害</span></span>
+                  <span class="remove" aria-label="移除"><svg class="icon"><use href="#i-close"/></svg></span>
+                </button>
+                <button class="word-item" type="button">
+                  <span class="word-copy"><span class="word-line"><b>eat</b><em class="status mastered"><i></i>已掌握</em></span><span class="word-meaning">吃；腐蚀</span></span>
+                  <span class="remove"><svg class="icon"><use href="#i-close"/></svg></span>
+                </button>
+                <button class="word-item" type="button">
+                  <span class="word-copy"><span class="word-line"><b>dock</b><em class="status mastered"><i></i>已掌握</em></span><span class="word-meaning">码头；船坞；被告席</span></span>
+                  <span class="remove"><svg class="icon"><use href="#i-close"/></svg></span>
+                </button>
+                <button class="word-item" type="button">
+                  <span class="word-copy"><span class="word-line"><b>serendipity</b><em class="status mastered"><i></i>已掌握</em></span><span class="word-meaning">偶然发现珍宝的运气或才能</span></span>
+                  <span class="remove"><svg class="icon"><use href="#i-close"/></svg></span>
+                </button>
+              </div>
+            </article>
+
+            <article class="word-detail-panel">
+              <header class="detail-header">
+                <div><span class="eyebrow">词条详情</span><h1>virus</h1></div>
+                <em class="status pending"><i></i>待学习</em>
+              </header>
+              <div class="pronunciation-row">
+                <button type="button"><svg class="icon"><use href="#i-volume"/></svg>英 /ˈvaɪrəs/</button>
+                <button type="button"><svg class="icon"><use href="#i-volume"/></svg>美 /ˈvaɪrəs/</button>
+              </div>
+
+              <section class="detail-section definition-section">
+                <span class="detail-label">中文释义</span>
+                <p>病毒；滤过性病毒；毒害</p>
+              </section>
+
+              <div class="detail-pair">
+                <section class="detail-section"><span class="detail-label">词性</span><div class="tag-row"><span class="soft-tag">noun</span></div></section>
+                <section class="detail-section"><span class="detail-label">来源</span><div class="source-value"><svg class="icon"><use href="#i-bookmark"/></svg>本地词库</div></section>
+              </div>
+
+              <section class="detail-section">
+                <span class="detail-label">常见搭配</span>
+                <div class="tag-row"><span class="soft-tag">the flu virus <small>流感病毒</small></span><span class="soft-tag">a virus infection <small>病毒感染</small></span></div>
+              </section>
+
+              <section class="detail-section example-section">
+                <span class="detail-label">常见例句</span>
+                <p>There's a virus going around the office.</p>
+                <small>办公室里流行着一种病毒性疾病。</small>
+              </section>
+
+              <footer class="detail-footer">
+                <div><span class="detail-label">学习状态</span><small>收藏于 2026/10/7</small></div>
+                <div class="state-actions"><button class="pending active"><i></i>待学习</button><button class="learning"><i></i>学习中</button><button class="mastered"><i></i>已掌握</button></div>
+              </footer>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-theme-value]').forEach((button) => button.addEventListener('click', () => {
+      document.body.dataset.theme = button.dataset.themeValue;
+      document.querySelectorAll('.theme-dot').forEach((item) => item.classList.toggle('active', item === button));
+    }));
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "file": "idle.png",
+    "state": "idle",
+    "size": "730x583",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "ready.png",
+    "state": "ready",
+    "size": "730x583",
+    "zoom": 1,
+    "issues": []
+  },
+  {
+    "file": "agreement.png",
+    "state": "agreement",
+    "size": "730x583",
+    "zoom": 1,
+    "issues": []
+  }
+]

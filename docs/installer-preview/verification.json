@@ -1,0 +1,60 @@
+{
+  "source_sheep_pngs_identical": 24,
+  "no_fixed_inward_coastal_fragments": true,
+  "completed_pose_gray_fragment_removed": true,
+  "real_payload_hashes": [
+    {
+      "file": "stardict.db",
+      "sha256": "966117f0e240afc096e460bd311c64f7268f488d7ee357b13f80a23128a17a37",
+      "matches_source": true
+    },
+    {
+      "file": "landict-oxford.db",
+      "sha256": "3e446cf4c4562862c8120412caaa5790ca3d8f747799475d56aedf2171e14d8a",
+      "matches_source": true
+    },
+    {
+      "file": "landict-cedict.db",
+      "sha256": "ecc567d5630c9fc66077762afc9ad98bfa0792321d03800838bb7283dad914c6",
+      "matches_source": true
+    }
+  ],
+  "successful_engine_completion": true,
+  "failed_engine_does_not_show_success_or_100": true,
+  "cancel_destroy_observed": true,
+  "native_200_buffer_frames": 67,
+  "footer_max_adjacent_row_difference": 4,
+  "footer_below_scene_clip_stationary": true,
+  "actual_os_dpi_verified": 96,
+  "size_simulations": [
+    {
+      "scale_percent": 125,
+      "window_size": [
+        913,
+        729
+      ],
+      "actual_dpi": 96,
+      "kind": "size simulation"
+    },
+    {
+      "scale_percent": 150,
+      "window_size": [
+        1095,
+        875
+      ],
+      "actual_dpi": 96,
+      "kind": "size simulation"
+    },
+    {
+      "scale_percent": 200,
+      "window_size": [
+        1460,
+        1166
+      ],
+      "actual_dpi": 96,
+      "kind": "native buffer size simulation; screen occluded by unrelated UAC/app prompt"
+    }
+  ],
+  "visual_approval": "pending user review",
+  "product_install_uninstall": "not performed in preview stage"
+}

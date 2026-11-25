@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LanDict · 生词本（按 design.md 实现）</title>
+<!--
+  这个文件是"按 design ui/design.md 重新画的生词本"，用来和现在跑着的页面（127.0.0.1:5173/vocabulary）对照。
+  规范对照：
+  配色   主色 #3266C4 / 悬停 #2858AD / 浅底 #EAF0FA；辅助绿 #37B84A；辅助粉红 #D93B70；
+         页面背景 #FAF9F6；内容表面 #FFFFFF；次级表面 #F2F1ED；选中表面 #E9E8E3；
+         主文字 #1D1D1B；次级文字 #85847E；弱化文字 #AAA9A2；分隔线 #E4E2DD。
+  字体   优先 Inter，中文回退 Noto Sans SC（说明.md 的字体结论），字重只用 400 / 500 / 600。
+  字号   页面标题 24/32·600；区块标题 18/26·600；卡片标题 15/22·500；正文 14/22·400；
+         导航与按钮 13/20·400（按钮 500）；元信息 11/16·400。
+  间距   4 / 8 / 12 / 16 / 24 / 32 / 48；主内容区 32px 内边距；卡片内边距 14–16px；列表行间距 8–12px。
+  组件   按钮高 36–40px、圆角 8px、无阴影；卡片圆角 14px、默认无边框无投影；
+         侧栏 228px、导航行高 36px、圆角 7px、左右内边距 10px；顶栏 56px；
+         筛选标签浅灰底、圆角 8px、字号 12–13px、间距 8px；浮层阴影 0 10px 28px rgba(29,29,27,.08)。
+  两处规范没写、由我按最近规则推导的地方见 design-previews/vocabulary-design-md-notes.md。
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+/* 中文用与 app 相同的 Noto Sans SC（vite 直接提供这个文件） */
+@font-face{font-family:"Noto Sans SC";src:url("/src/assets/fonts/NotoSansSC-VF.ttf") format("truetype");font-weight:100 900;font-display:swap}
+:root{
+  --brand:#3266C4; --brand-hover:#2858AD; --brand-soft:#EAF0FA;
+  --green:#37B84A; --pink:#D93B70;
+  --bg:#FAF9F6; --surface:#FFFFFF; --surface-2:#F2F1ED; --surface-selected:#E9E8E3;
+  --text:#1D1D1B; --text-2:#85847E; --text-3:#AAA9A2; --line:#E4E2DD;
+  --shadow-float:0 10px 28px rgba(29,29,27,.08);
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s6:24px; --s8:32px; --s12:48px;
+  --r-btn:8px; --r-card:14px; --r-nav:7px;
+  --font:"Inter","Noto Sans SC",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:400 14px/22px var(--font);-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer}
+svg{display:block;flex-shrink:0}
+[hidden]{display:none !important}
+/* 字号层级：严格对应 design.md 的排版表 */
+.t-page{font-size:24px;line-height:32px;font-weight:600}
+.t-section{font-size:18px;line-height:26px;font-weight:600}
+.t-card{font-size:15px;line-height:22px;font-weight:500}
+.t-body{font-size:14px;line-height:22px;font-weight:400}
+.t-nav{font-size:13px;line-height:20px;font-weight:400}
+.t-meta{font-size:11px;line-height:16px;font-weight:400}
+.muted{color:var(--text-2)}
+.faint{color:var(--text-3)}
+
+/* 外壳：顶栏 56px + 侧栏 228px（design.md 导航栏与布局） */
+.app{display:grid;height:100vh;grid-template-columns:228px minmax(0,1fr);grid-template-rows:56px minmax(0,1fr)}
+.topbar{display:flex;grid-column:1/-1;align-items:center;justify-content:space-between;padding:0 var(--s6);border-bottom:1px solid var(--line);background:var(--surface)}
+.brand{display:flex;align-items:center;gap:var(--s2);font-size:15px;font-weight:600}
+.brand-mark{display:grid;width:24px;height:24px;place-items:center;border-radius:var(--r-nav);background:var(--brand);color:#fff}
+.window-actions{display:flex;align-items:center;gap:var(--s4);color:var(--text-3)}
+.sidebar{display:flex;flex-direction:column;gap:var(--s6);padding:var(--s4) var(--s2);border-right:1px solid var(--line);background:var(--surface)}
+.nav{display:grid;gap:var(--s1)}
+.nav-label{padding:0 10px;margin-bottom:var(--s1);color:var(--text-3);font-size:11px;line-height:16px;font-weight:400}
+.nav-item{display:flex;height:36px;align-items:center;gap:var(--s3);padding:0 10px;border-radius:var(--r-nav);color:var(--text-2);font-size:13px;line-height:20px;font-weight:400;text-align:left;width:100%}
+.nav-item svg{color:currentColor}
+.nav-item:hover{background:var(--surface-2);color:var(--text)}
+.nav-item[aria-current="page"]{background:var(--surface-selected);color:var(--text)}
+.sidebar-foot{margin-top:auto}
+
+/* 主内容区：32px 内边距 */
+.main{min-height:0;overflow:auto;padding:var(--s8)}
+.page-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--s2) var(--s4);margin-bottom:var(--s6)}
+.page-count{color:var(--text-3);font-size:11px;line-height:16px}
+/* 两个功能面板之间留 24px，属于"不同功能区至少 24px" */
+.workspace{display:grid;grid-template-columns:minmax(300px,42fr) minmax(0,58fr);gap:var(--s6);align-items:start}
+/* 内容表面：白底 + 1px 分隔线；卡片圆角 14px；无投影 */
+.panel{border:1px solid var(--line);border-radius:var(--r-card);background:var(--surface);padding:var(--s4)}
+.panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3);margin-bottom:var(--s3)}
+
+/* 工具行 */
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s2);margin-bottom:var(--s3)}
+.search{display:flex;min-width:160px;height:38px;flex:1 1 180px;align-items:center;gap:var(--s2);padding:0 var(--s3);border:1px solid var(--line);border-radius:var(--r-btn);background:var(--surface)}
+.search:focus-within{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.search svg{color:var(--text-3)}
+.search input{width:100%;height:100%;border:0;background:none;outline:0;font-size:13px;line-height:20px}
+.search input::placeholder{color:var(--text-3)}
+/* 按钮：高 36–40px、内边距 14–16px、圆角 8px、默认无阴影 */
+.btn{display:inline-flex;height:38px;align-items:center;gap:6px;padding:0 15px;border:1px solid transparent;border-radius:var(--r-btn);font-size:13px;line-height:20px;font-weight:500;white-space:nowrap}
+.btn-primary{background:var(--brand);color:#fff}
+.btn-primary:hover{background:var(--brand-hover)}
+.btn-secondary{border-color:var(--line);background:var(--surface);color:var(--text)}
+.btn-secondary:hover{background:var(--surface-2)}
+.btn-light{color:var(--text-2)}
+.btn-light:hover{background:var(--surface-selected);color:var(--text)}
+.btn-light[aria-pressed="true"]{background:var(--surface-selected);color:var(--text)}
+.btn-icon{width:32px;height:32px;justify-content:center;padding:0;border-radius:var(--r-btn);color:var(--text-3)}
+.btn-icon:hover{background:var(--surface-2);color:var(--text)}
+.btn:focus-visible,.filter-chip:focus-visible,.row:focus-visible,.status-btn:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* 筛选标签：浅灰底、圆角 8px、12px 字、间距 8px */
+.filter-row{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.filter-chip{display:inline-flex;height:28px;align-items:center;gap:6px;padding:0 var(--s3);border-radius:var(--r-btn);background:var(--surface-2);color:var(--text-2);font-size:12px;line-height:20px}
+.filter-chip:hover{color:var(--text)}
+.filter-chip[aria-pressed="true"]{background:var(--surface-selected);color:var(--text)}
+
+/* 状态：只用小面积辅助色（design.md：辅助色只用于小面积分类信息） */
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:20px;font-weight:400}
+.status i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.status-learning{color:var(--brand)}
+.status-pending{color:var(--pink)}
+.status-mastered{color:var(--green)}
+
+/* 列表行：次级表面卡片、圆角 14px、无边框无投影、行间距 8px */
+.list{display:grid;gap:var(--s2)}
+.row{display:flex;align-items:center;gap:var(--s3);padding:14px;border-radius:var(--r-card);background:var(--surface-2);text-align:left;width:100%}
+.row:hover{background:#EDECE7}
+.row[aria-selected="true"]{background:var(--surface-selected)}
+.row-main{display:grid;min-width:0;flex:1;gap:var(--s2)}
+.row-top{display:flex;min-width:0;align-items:center;gap:var(--s2)}
+.row-word{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-meaning{margin:0;overflow:hidden;color:var(--text-2);text-overflow:ellipsis;white-space:nowrap}
+.mask-chip{align-self:start;justify-self:start;display:inline-flex;align-items:center;gap:6px;padding:2px var(--s2);border:1px dashed var(--line);border-radius:var(--r-btn);color:var(--text-3);font-size:12px;line-height:20px}
+.mask-chip:hover{border-color:var(--brand);color:var(--brand)}
+
+/* 详情面板 */
+.detail{display:grid;gap:var(--s4)}
+.detail-top{display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+.detail-label{color:var(--text-3);font-size:11px;line-height:16px}
+.detail-word{margin:0}
+.phonetics{display:flex;flex-wrap:wrap;gap:var(--s4)}
+.section{display:grid;gap:var(--s2);padding-top:var(--s4);border-top:1px solid var(--line)}
+.section:first-of-type{padding-top:0;border-top:0}
+.section h3{margin:0;color:var(--text-2);font-size:13px;line-height:20px;font-weight:400}
+.section p{margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.tag{padding:2px var(--s2);border-radius:var(--r-btn);background:var(--surface-2);color:var(--text-2);font-size:12px;line-height:20px}
+.example{display:grid;gap:var(--s1)}
+.example-en{margin:0}
+.example-cn{margin:0;color:var(--text-2)}
+.study{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s3);padding-top:var(--s4);border-top:1px solid var(--line)}
+.study-actions{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.status-btn{display:inline-flex;height:28px;align-items:center;gap:6px;padding:0 var(--s3);border-radius:var(--r-btn);background:var(--surface-2);color:var(--text-2);font-size:12px;line-height:20px}
+.status-btn:hover{color:var(--text)}
+.status-btn[aria-pressed="true"]{background:var(--surface-selected);color:var(--text)}
+.status-btn i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.status-btn--pending i{background:var(--pink)}
+.status-btn--learning i{background:var(--brand)}
+.status-btn--mastered i{background:var(--green)}
+.detail-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s3);padding-top:var(--s4);border-top:1px solid var(--line);color:var(--text-3)}
+.detail-foot span{display:inline-flex;align-items:center;gap:6px}
+.empty{display:grid;place-items:center;gap:var(--s3);padding:var(--s12) var(--s4);color:var(--text-2);text-align:center}
+.empty strong{font-size:18px;line-height:26px;font-weight:600;color:var(--text)}
+
+/* 浮层：白底 + 1px 分隔线 + 轻投影（design.md 搜索浮层那一条） */
+.toast{position:fixed;left:50%;bottom:var(--s6);z-index:40;display:flex;align-items:center;gap:var(--s3);transform:translateX(-50%);padding:var(--s3) var(--s4);border:1px solid var(--line);border-radius:var(--r-card);background:var(--surface);box-shadow:var(--shadow-float);font-size:13px;line-height:20px}
+.toast button{color:var(--brand);font-weight:500}
+.modal-backdrop{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:var(--s4);background:rgba(29,29,27,.28)}
+.modal{display:grid;width:min(520px,100%);gap:var(--s2);padding:var(--s6);border:1px solid var(--line);border-radius:var(--r-card);background:var(--surface);box-shadow:var(--shadow-float)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:var(--s3)}
+.modal textarea{width:100%;min-height:104px;padding:var(--s3);border:0;border-radius:var(--r-btn);background:var(--surface-2);color:var(--text);font-size:13px;line-height:20px;resize:vertical;outline:0}
+.modal textarea:focus-visible{box-shadow:0 0 0 3px var(--brand-soft)}
+.drop{display:flex;align-items:center;gap:var(--s3);padding:var(--s3);border:1px dashed var(--line);border-radius:var(--r-btn);color:var(--text-2);font-size:13px;line-height:20px}
+.modal-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:var(--s3);margin-top:var(--s2)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <!-- 图标统一 16 网格、1.5 描边、round 端点（design.md / 图标库.md） -->
+  <symbol id="i-home" viewBox="0 0 16 16"><path d="M2.5 7 8 2.5 13.5 7v6a.5.5 0 0 1-.5.5h-3V9.5H6V13.5H3a.5.5 0 0 1-.5-.5Z"/></symbol>
+  <symbol id="i-translate" viewBox="0 0 16 16"><path d="M2 3.5h6M5 2v1.5M7.5 3.5c-.5 2.6-2 4.5-4.5 5.6M3.2 5.2c1 1.7 2.4 2.9 4.3 4M9.5 9 12 14.5M14.5 9 12 14.5M10.6 12h2.8"/></symbol>
+  <symbol id="i-book" viewBox="0 0 16 16"><path d="M8 4.5C6 3.2 4 3 2 3.7v8.6c2-.7 4-.5 6 .8 2-1.3 4-1.5 6-.8V3.7c-2-.7-4-.5-6 .8Z"/><path d="M8 4.5v8.6"/></symbol>
+  <symbol id="i-bookmark" viewBox="0 0 16 16"><path d="M3.5 2.5h9v11.5L8 11.2 3.5 14Z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.8v1.6M8 12.6v1.6M1.8 8h1.6M12.6 8h1.6M3.6 3.6l1.1 1.1M11.3 11.3l1.1 1.1M12.4 3.6l-1.1 1.1M4.7 11.3l-1.1 1.1"/></symbol>
+  <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7.2" cy="7.2" r="4.4"/><path d="m10.6 10.6 3 3"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 16 16"><path d="M2.5 4.5h11M4.5 8h7M6.5 11.5h3"/></symbol>
+  <symbol id="i-sort" viewBox="0 0 16 16"><path d="M2.5 4h6M2.5 8h4M2.5 12h2.5M11.5 2.5v11M9 11l2.5 2.5L14 11"/></symbol>
+  <symbol id="i-download" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M3 11.5v1.5h10v-1.5"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 16 16"><path d="M1.5 8S4 4 8 4s6.5 4 6.5 4-2.5 4-6.5 4-6.5-4-6.5-4Z"/><circle cx="8" cy="8" r="1.8"/></symbol>
+  <symbol id="i-eye-off" viewBox="0 0 16 16"><path d="M2 2l12 12M6.4 3.7A6.7 6.7 0 0 1 8 3.5c4 0 6.5 4.5 6.5 4.5a12 12 0 0 1-2.2 2.5M4 5.1A12 12 0 0 0 1.5 8S4 12.5 8 12.5c.6 0 1.1-.1 1.6-.3"/></symbol>
+  <symbol id="i-graduate" viewBox="0 0 16 16"><path d="m1.5 6 6.5-3 6.5 3-6.5 3L1.5 6Zm3 2v3c2.2 1.6 4.8 1.6 7 0V8m3-2v5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 16 16"><path d="M12 4 4 12M4 4l8 8"/></symbol>
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="m3.5 8.5 3 3 6-6.5"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 16 16"><path d="M7.5 3.5 4.5 6H2v4h2.5l3 2.5ZM10.5 6a3 3 0 0 1 0 4M12.5 4a5.5 5.5 0 0 1 0 8"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 4.5V8l2.5 1.5"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 16 16"><path d="M3 8h10"/></symbol>
+  <symbol id="i-square" viewBox="0 0 16 16"><rect x="3.5" y="3.5" width="9" height="9" rx="1"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book" /></svg></span>LanDict</div>
+    <div class="window-actions">
+      <svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round"><use href="#i-minus" /></svg>
+      <svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-square" /></svg>
+      <svg width="14" height="14" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round"><use href="#i-close" /></svg>
+    </div>
+  </header>
+
+  <!-- 侧栏 228px、导航行 36px / 圆角 7px / 左右 10px -->
+  <aside class="sidebar">
+    <nav class="nav" aria-label="主导航">
+      <span class="nav-label">学习</span>
+      <button class="nav-item" type="button"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-home" /></svg>首页</button>
+      <button class="nav-item" type="button"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-translate" /></svg>翻译</button>
+      <button class="nav-item" type="button"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-book" /></svg>阅读</button>
+      <button class="nav-item" type="button" aria-current="page"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bookmark" /></svg>生词本</button>
+      <button class="nav-item" type="button"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-graduate" /></svg>背单词</button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="nav-item" type="button"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-settings" /></svg>设置</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-head">
+      <h1 class="t-page" style="margin:0">生词本</h1>
+      <span class="page-count" id="pageCount">共 4 个单词 · 待学习 1</span>
+    </div>
+
+    <div class="workspace">
+      <div>
+        <div class="tools">
+          <label class="search"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round"><use href="#i-search" /></svg><input id="searchInput" type="search" placeholder="搜索生词或释义" aria-label="搜索生词或释义" /></label>
+        </div>
+        <div class="filter-row" style="margin-bottom:var(--s4)">
+          <button class="filter-chip" type="button" data-filter="all" aria-pressed="true">全部状态</button>
+          <button class="filter-chip" type="button" data-filter="pending" aria-pressed="false">待学习</button>
+          <button class="filter-chip" type="button" data-filter="learning" aria-pressed="false">学习中</button>
+          <button class="filter-chip" type="button" data-filter="mastered" aria-pressed="false">已掌握</button>
+          <button class="filter-chip" type="button" id="sortChip">排序：最近收藏</button>
+        </div>
+        <section class="panel" aria-label="生词列表">
+          <div class="panel-head">
+            <div><span class="t-card">我的生词</span> <span class="t-meta faint" id="listCount">4 / 4</span></div>
+            <span class="t-meta faint" id="listTip">选择单词查看详情</span>
+          </div>
+          <div class="list" id="list"></div>
+        </section>
+      </div>
+
+      <div>
+        <div class="tools" style="justify-content:flex-end">
+          <button class="btn btn-secondary" type="button" id="importButton"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-download" /></svg>导入</button>
+          <button class="btn btn-light" type="button" id="maskButton" aria-pressed="false"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-eye-off" /></svg><span>隐藏释义</span></button>
+          <button class="btn btn-primary" type="button" id="studyButton"><svg width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-graduate" /></svg>开始背单词</button>
+        </div>
+        <section class="panel detail" id="detail" aria-label="单词详情"></section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toastRoot"></div>
+<div id="modalRoot"></div>
+
+<script>
+(() => {
+'use strict';
+const icon = (id, size = 16) => `<svg width="${size}" height="${size}" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#${id}"></use></svg>`;
+const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const STATUS = { pending: '待学习', learning: '学习中', mastered: '已掌握' };
+const SORTS = ['最近收藏', '最早收藏', '单词 A–Z', '单词 Z–A'];
+
+/* 演示数据与现在跑着的页面一致，方便直接对照 */
+const seed = [
+  { id: 'virus', word: 'virus', meaning: '病毒；滤过性病毒；毒害', part: 'noun', uk: '/ˈvaɪrəs/', us: '/ˈvaɪrəs/', status: 'pending', source: '本地词库', added: '2026/10/7',
+    phrases: [['the flu virus', '流感病毒'], ['a virus infection', '病毒感染']], example: "There's a virus going around the office.", exampleCn: '办公室里正在流传一种病毒。' },
+  { id: 'eat', word: 'eat', meaning: '吃；腐蚀', part: 'verb', uk: '/iːt/', us: '/iːt/', status: 'mastered', source: 'Collins MDX 本地词库', added: '2026/10/2',
+    phrases: [], example: 'I was too nervous to eat.', exampleCn: '我紧张得饭都吃不下。' },
+  { id: 'dock', word: 'dock', meaning: '码头；船坞；被告席；使靠码头；使(船)进港；剪短；进港', part: 'noun · verb', uk: '/dɒk/', us: '/dɑːk/', status: 'mastered', source: '本地词库', added: '2026/9/29',
+    phrases: [['loading dock', '装卸码头']], example: 'The ship docked at dawn.', exampleCn: '船在黎明时靠岸。' },
+  { id: 'serendipity', word: 'serendipity', meaning: '偶然发现珍宝的运气/才能；易遇奇缘的运气', part: 'noun', uk: '/ˌserənˈdɪpəti/', us: '/ˌserənˈdɪpəti/', status: 'mastered', source: '本地词库', added: '2026/9/28',
+    phrases: [['pure serendipity', '纯粹的机缘']], example: 'It was pure serendipity.', exampleCn: '那完全是机缘巧合。' },
+];
+
+let words = seed.map((entry) => ({ ...entry }));
+let filter = 'all';
+let sort = 0;
+let query = '';
+let selectedId = words[0].id;
+let masked = false;
+let revealed = new Set();
+let toastTimer = null;
+let undoItem = null;
+
+const byId = (id) => document.getElementById(id);
+
+function visible() {
+  const list = words
+    .filter((entry) => filter === 'all' || entry.status === filter)
+    .filter((entry) => !query || entry.word.includes(query) || entry.meaning.includes(query));
+  if (sort === 1) return [...list].reverse();
+  if (sort === 2) return [...list].sort((a, b) => a.word.localeCompare(b.word, 'en'));
+  if (sort === 3) return [...list].sort((a, b) => b.word.localeCompare(a.word, 'en'));
+  return list;
+}
+
+const statusLine = (status) => `<span class="status status-${status}"><i></i>${STATUS[status]}</span>`;
+const hidden = (entry) => masked && !revealed.has(entry.id);
+
+function renderList() {
+  const list = visible();
+  const pending = words.filter((entry) => entry.status === 'pending').length;
+  byId('pageCount').textContent = `共 ${words.length} 个单词 · 待学习 ${pending}`;
+  byId('listCount').textContent = `${list.length} / ${words.length}`;
+  byId('listTip').textContent = masked ? '遮挡模式 · 点击揭晓释义' : '选择单词查看详情';
+  byId('list').innerHTML = list.length ? list.map((entry) => `
+    <div class="row" role="button" tabindex="0" aria-selected="${entry.id === selectedId}" data-id="${entry.id}" aria-label="查看 ${esc(entry.word)} 详情">
+      <div class="row-main">
+        <div class="row-top"><span class="row-word t-card">${esc(entry.word)}</span>${statusLine(entry.status)}</div>
+        ${hidden(entry)
+          ? `<button class="mask-chip" type="button" data-reveal="${entry.id}">${icon('i-eye', 13)}点击揭晓中文释义</button>`
+          : `<p class="row-meaning t-body">${esc(entry.meaning)}</p>`}
+      </div>
+      <button class="btn-icon" type="button" data-remove="${entry.id}" aria-label="移出 ${esc(entry.word)}" title="移出生词本（可撤销）">${icon('i-close', 14)}</button>
+    </div>`).join('') : `<div class="empty"><strong>没有匹配的单词</strong><span class="t-body">换个关键词，或把筛选切回「全部状态」</span></div>`;
+}
+
+function renderDetail() {
+  const entry = words.find((item) => item.id === selectedId);
+  if (!entry) {
+    byId('detail').innerHTML = `<div class="empty"><span class="t-section">请选择一个单词</span><span class="t-body">这里会显示释义、搭配、例句和学习状态</span></div>`;
+    return;
+  }
+  const isHidden = hidden(entry);
+  byId('detail').innerHTML = `
+    <div class="detail-top"><span class="detail-label">词条详情</span>${statusLine(entry.status)}</div>
+    <div style="display:grid;gap:var(--s2)">
+      <h2 class="t-page detail-word">${esc(entry.word)}</h2>
+      <div class="phonetics">
+        <button class="btn btn-light" type="button">${icon('i-sound', 16)}英 ${esc(entry.uk)}</button>
+        <button class="btn btn-light" type="button">${icon('i-sound', 16)}美 ${esc(entry.us)}</button>
+      </div>
+    </div>
+    <section class="section">
+      <h3>中文释义</h3>
+      ${isHidden ? `<button class="btn btn-secondary" type="button" data-reveal="${entry.id}" style="justify-self:start">${icon('i-eye', 16)}点击显示中文释义</button>` : `<p class="t-body">${esc(entry.meaning)}</p>`}
+    </section>
+    <section class="section">
+      <h3>词性</h3>
+      <div class="tags">${entry.part.split(' · ').map((part) => `<span class="tag">${esc(part)}</span>`).join('')}</div>
+    </section>
+    <section class="section">
+      <h3>常见搭配</h3>
+      ${entry.phrases.length
+        ? `<div class="tags">${entry.phrases.map(([phrase, cn]) => `<span class="tag">${esc(phrase)}（${esc(cn)}）</span>`).join('')}</div>`
+        : `<p class="t-body muted">暂无常见搭配</p>`}
+    </section>
+    <section class="section">
+      <h3>常见例句</h3>
+      <div class="example">
+        <p class="t-body example-en">${esc(entry.example)}</p>
+        ${isHidden ? `<button class="btn btn-secondary" type="button" data-reveal="${entry.id}" style="justify-self:start">${icon('i-eye', 16)}点击显示译文</button>` : `<p class="t-body example-cn">${esc(entry.exampleCn)}</p>`}
+      </div>
+    </section>
+    <section class="study">
+      <span class="t-card">学习状态</span>
+      <div class="study-actions">
+        ${Object.keys(STATUS).map((status) => `<button class="status-btn status-btn--${status}" type="button" data-status="${status}" aria-pressed="${entry.status === status}"><i></i>${STATUS[status]}</button>`).join('')}
+      </div>
+    </section>
+    <footer class="detail-foot">
+      <span class="t-meta">${icon('i-bookmark', 12)}${esc(entry.source)}</span>
+      <span class="t-meta">${icon('i-clock', 12)}收藏于 ${esc(entry.added)}</span>
+    </footer>`;
+}
+
+function render() { renderList(); renderDetail(); }
+
+function toast(text, undo = false) {
+  clearTimeout(toastTimer);
+  undoItem = undo ? undoItem : null;
+  byId('toastRoot').innerHTML = `<div class="toast" role="status">${icon('i-check', 16)}<span>${esc(text)}</span>${undo ? '<button type="button" id="undoButton">撤销</button>' : ''}</div>`;
+  if (undo) byId('undoButton').addEventListener('click', () => {
+    if (!undoItem) return;
+    words.splice(Math.min(undoItem.index, words.length), 0, undoItem.entry);
+    selectedId = undoItem.entry.id;
+    undoItem = null;
+    render();
+    toast(`已恢复收藏：${words.find((entry) => entry.id === selectedId).word}`);
+  });
+  toastTimer = setTimeout(() => { byId('toastRoot').innerHTML = ''; undoItem = null; }, undo ? 5000 : 3000);
+}
+
+function removeEntry(id) {
+  const index = words.findIndex((entry) => entry.id === id);
+  if (index < 0) return;
+  undoItem = { index, entry: words[index] };
+  words.splice(index, 1);
+  if (selectedId === id) selectedId = words[0]?.id ?? null;
+  render();
+  toast(`已将 ${undoItem.entry.word} 移出生词本`, true);
+}
+
+byId('list').addEventListener('click', (event) => {
+  const remove = event.target.closest('[data-remove]');
+  if (remove) { removeEntry(remove.dataset.remove); return; }
+  const reveal = event.target.closest('[data-reveal]');
+  if (reveal) { revealed.add(reveal.dataset.reveal); render(); return; }
+  const row = event.target.closest('.row');
+  if (row) { selectedId = row.dataset.id; render(); }
+});
+
+byId('detail').addEventListener('click', (event) => {
+  const reveal = event.target.closest('[data-reveal]');
+  if (reveal) { revealed.add(reveal.dataset.reveal); render(); return; }
+  const status = event.target.closest('[data-status]');
+  if (status) {
+    const entry = words.find((item) => item.id === selectedId);
+    if (entry) { entry.status = status.dataset.status; render(); }
+  }
+});
+
+byId('searchInput').addEventListener('input', (event) => { query = event.target.value.trim().toLowerCase(); renderList(); });
+
+document.querySelectorAll('.filter-chip[data-filter]').forEach((chip) => chip.addEventListener('click', () => {
+  filter = chip.dataset.filter;
+  document.querySelectorAll('.filter-chip[data-filter]').forEach((item) => item.setAttribute('aria-pressed', String(item.dataset.filter === filter)));
+  renderList();
+}));
+
+byId('sortChip').addEventListener('click', () => {
+  sort = (sort + 1) % SORTS.length;
+  byId('sortChip').textContent = `排序：${SORTS[sort]}`;
+  renderList();
+});
+
+byId('maskButton').addEventListener('click', () => {
+  masked = !masked;
+  revealed = new Set();
+  byId('maskButton').setAttribute('aria-pressed', String(masked));
+  byId('maskButton').innerHTML = masked
+    ? `${icon('i-eye', 16)}<span>显示全部释义</span>`
+    : `${icon('i-eye-off', 16)}<span>隐藏释义</span>`;
+  render();
+});
+
+byId('studyButton').addEventListener('click', () => toast('背单词页面还在设计里，这里先占个位置'));
+
+document.querySelectorAll('.nav-item').forEach((item) => item.addEventListener('click', () => {
+  if (item.getAttribute('aria-current') === 'page') return;
+  toast('这个预览只做了生词本一页');
+}));
+
+byId('importButton').addEventListener('click', () => {
+  byId('modalRoot').innerHTML = `
+    <div class="modal-backdrop" id="backdrop">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="importTitle">
+        <div class="modal-head"><h2 class="t-section" id="importTitle" style="margin:0">导入生词</h2><button class="btn-icon" type="button" id="closeModal" aria-label="关闭">${icon('i-close', 14)}</button></div>
+        <p class="t-body muted" style="margin:0 0 var(--s2)">粘贴插件导出的 JSON，或者一行一个单词。重复的会自动跳过；没写释义的先记成「待补充释义」。</p>
+        <textarea id="importText" spellcheck="false" aria-label="粘贴内容" placeholder='[{"word":"groggy","meaning":"昏昏沉沉的"}]&#10;也可以一行一个单词：&#10;serendipity'></textarea>
+        <div class="drop">${icon('i-download', 16)}<span>选择 .json / .txt / .csv 文件，或拖到这里</span></div>
+        <p class="t-meta faint" id="importSummary" style="margin:var(--s2) 0 0">还没有内容：粘贴 JSON 或单词列表，也可以选一个文件。</p>
+        <div class="modal-foot">
+          <span class="t-meta faint">只在本机处理，不会上传。</span>
+          <button class="btn btn-primary" type="button" id="confirmImport" disabled>导入 0 个词</button>
+        </div>
+      </div>
+    </div>`;
+  const update = () => {
+    const rows = byId('importText').value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+    const known = new Set(words.map((entry) => entry.word.toLowerCase()));
+    let added = 0, duplicate = 0;
+    rows.forEach((line) => {
+      const [word] = line.replace(/[[\]{}"]/g, '').split(/,|\t|\||;/);
+      const clean = String(word ?? '').replace(/^word\s*:\s*/i, '').trim().toLowerCase();
+      if (!/^[a-z][a-z'’\-. ]*$/.test(clean)) return;
+      if (known.has(clean)) { duplicate += 1; return; }
+      known.add(clean);
+      added += 1;
+    });
+    byId('importSummary').textContent = rows.length
+      ? `识别到 ${rows.length} 行：新增 ${added} 个${duplicate ? `，重复跳过 ${duplicate} 个` : ''}`
+      : '还没有内容：粘贴 JSON 或单词列表，也可以选一个文件。';
+    const confirm = byId('confirmImport');
+    confirm.disabled = added === 0;
+    confirm.textContent = `导入 ${added} 个词`;
+  };
+  byId('importText').addEventListener('input', update);
+  byId('closeModal').addEventListener('click', () => { byId('modalRoot').innerHTML = ''; });
+  byId('backdrop').addEventListener('mousedown', (event) => { if (event.target.id === 'backdrop') byId('modalRoot').innerHTML = ''; });
+  byId('confirmImport').addEventListener('click', () => toast('演示页不写入数据，正式页会真的导入'));
+  byId('importText').focus();
+  update();
+});
+
+render();
+})();
+</script>
+</body>
+</html>

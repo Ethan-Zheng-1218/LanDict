@@ -1,0 +1,96 @@
+{
+  "source": "doubao-run-sheet.png",
+  "grid": [
+    4,
+    3
+  ],
+  "source_size": [
+    1448,
+    1086
+  ],
+  "frame_count": 12,
+  "frame_size": [
+    320,
+    320
+  ],
+  "frame_duration_ms": 80,
+  "cycle_ms": 960,
+  "source_cell_bounds": [
+    [
+      33,
+      92,
+      356,
+      351
+    ],
+    [
+      28,
+      90,
+      352,
+      352
+    ],
+    [
+      28,
+      92,
+      350,
+      350
+    ],
+    [
+      29,
+      92,
+      350,
+      350
+    ],
+    [
+      34,
+      52,
+      358,
+      316
+    ],
+    [
+      29,
+      50,
+      356,
+      315
+    ],
+    [
+      25,
+      46,
+      355,
+      315
+    ],
+    [
+      17,
+      44,
+      344,
+      307
+    ],
+    [
+      35,
+      10,
+      356,
+      273
+    ],
+    [
+      29,
+      13,
+      353,
+      280
+    ],
+    [
+      20,
+      8,
+      351,
+      282
+    ],
+    [
+      21,
+      12,
+      350,
+      278
+    ]
+  ],
+  "uniform_scale": 0.8459214501510574,
+  "registration": "whole-pose top anchor 35px, centered horizontally",
+  "art_review": "pending user visual validation",
+  "installer_integration": false
+}
